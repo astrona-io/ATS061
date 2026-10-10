@@ -1,0 +1,84 @@
+# Preparation scaffold. Technical pages stay draft until authoring and review.
+training:
+  id: ATS061
+  title: 'CAPA: ARGO CD'
+  description: Preparation scaffold for ARGO CD. Lessons and environments are planned.
+  certification:
+    name: Certified Argo Project Associate
+    code: CAPA
+    provider: CNCF / Linux Foundation
+    domain: ARGO CD
+    weight: 34
+    competencies:
+    - Understand Argo CD Fundamentals
+    - Synchronize Applications Using Argo CD
+    - Use Argo CD Application
+    - Configure Argo CD with Helm and Kustomize
+    - Identify Common Reconciliation Patterns
+modules:
+- id: module-intro
+  title: Introduction
+  description: Planned introduction and authoring status.
+  content:
+  - type: reading
+    title: Introduction
+    path: sections/intro/README.md
+  - type: reading
+    title: Welcome To The Course
+    path: sections/intro/course-01-welcome.md
+  - type: reading
+    title: Get Your Machine Ready
+    path: sections/intro/course-02-get-your-machine-ready.md
+  - type: reading
+    title: How This Course Is Made
+    path: sections/intro/course-03-how-this-course-is-made.md
+- id: module-010
+  title: Understand Argo CD Fundamentals
+  description: Planned coverage of this curriculum objective.
+  content:
+  - type: reading
+    title: Section Overview
+    path: sections/section-010/README.md
+  - type: reading
+    title: Understand Argo CD Fundamentals
+    path: sections/section-010/module-01/course.md
+- id: module-020
+  title: Synchronize Applications Using Argo CD
+  description: Planned coverage of this curriculum objective.
+  content:
+  - type: reading
+    title: Section Overview
+    path: sections/section-020/README.md
+  - type: reading
+    title: Synchronize Applications Using Argo CD
+    path: sections/section-020/module-01/course.md
+- id: module-030
+  title: Use Argo CD Application
+  description: Planned coverage of this curriculum objective.
+  content:
+  - type: reading
+    title: Section Overview
+    path: sections/section-030/README.md
+  - type: reading
+    title: Use Argo CD Application
+    path: sections/section-030/module-01/course.md
+- id: module-040
+  title: Configure Argo CD with Helm and Kustomize
+  description: Planned coverage of this curriculum objective.
+  content:
+  - type: reading
+    title: Section Overview
+    path: sections/section-040/README.md
+  - type: reading
+    title: Configure Argo CD with Helm and Kustomize
+    path: sections/section-040/module-01/course.md
+- id: module-050
+  title: Identify Common Reconciliation Patterns
+  description: Planned coverage of this curriculum objective.
+  content:
+  - type: reading
+    title: Section Overview
+    path: sections/section-050/README.md
+  - type: reading
+    title: Identify Common Reconciliation Patterns
+    path: sections/section-050/module-01/course.md
