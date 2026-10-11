@@ -1,0 +1,124 @@
+version: 1
+approval: CAPA requested 2026-10-11; established reading-only scope
+course:
+  id: ATS061
+  certification:
+    name: Certified Argo Project Associate
+    code: CAPA
+    provider: CNCF / Linux Foundation
+    domain: ARGO CD
+    weight: 34
+    competencies:
+    - Understand Argo CD Fundamentals
+    - Synchronize Applications Using Argo CD
+    - Use Argo CD Application
+    - Configure Argo CD with Helm and Kustomize
+    - Identify Common Reconciliation Patterns
+defaults:
+  playground: false
+  module_lab: false
+  capstone: false
+  section_quiz: false
+  final_quiz: true
+assessment_format: YAML question banks v1, registered in assessments/index.yaml
+sections:
+- id: section-010
+  title: Understand Argo CD Fundamentals
+  curriculum_item: Understand Argo CD Fundamentals
+  capstone: false
+  section_quiz: false
+  modules:
+  - id: module-01
+    title: Argo CD Desired State And Reconciliation
+    objectives:
+    - Explain declarative desired state and live-state comparison.
+    - Distinguish repository rendering from cluster application.
+    - Separate sync status from resource health.
+    - Identify controller, repository and access dependencies.
+    outline:
+    - Argo CD Desired State And Reconciliation
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-010/module-01/course-01-argo-cd-desired-state-and-reconciliation.md
+      adapted_from: null
+- id: section-020
+  title: Synchronize Applications Using Argo CD
+  curriculum_item: Synchronize Applications Using Argo CD
+  capstone: false
+  section_quiz: false
+  modules:
+  - id: module-01
+    title: Manual And Automated Sync, Pruning And Self-Healing
+    objectives:
+    - Distinguish comparison from synchronization.
+    - Explain automated sync, pruning and self-heal as separate choices.
+    - Interpret ordering, hooks and failure behavior.
+    - Evaluate rollback against the declared source of truth.
+    outline:
+    - Manual And Automated Sync, Pruning And Self-Healing
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-020/module-01/course-01-manual-and-automated-sync-pruning-and-self-healing.md
+      adapted_from: null
+- id: section-030
+  title: Use Argo CD Application
+  curriculum_item: Use Argo CD Application
+  capstone: false
+  section_quiz: false
+  modules:
+  - id: module-01
+    title: Application Source, Destination And Project Boundaries
+    objectives:
+    - Read an Application's source, destination and project relationships.
+    - Explain revision, path, namespace and cluster identity.
+    - Distinguish AppProject restrictions from destination RBAC.
+    - Evaluate tracking, status and deletion lifecycle.
+    outline:
+    - Application Source, Destination And Project Boundaries
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-030/module-01/course-01-application-source-destination-and-project-boundaries.md
+      adapted_from: null
+- id: section-040
+  title: Configure Argo CD with Helm and Kustomize
+  curriculum_item: Configure Argo CD with Helm and Kustomize
+  capstone: false
+  section_quiz: false
+  modules:
+  - id: module-01
+    title: Helm And Kustomize As Argo CD Rendering Inputs
+    objectives:
+    - Explain Helm template rendering versus Helm release lifecycle.
+    - Interpret chart values, release-name and namespace interactions.
+    - Explain Kustomize bases, overlays and transformations.
+    - Evaluate deterministic output and secret exposure in generation.
+    outline:
+    - Helm And Kustomize As Argo CD Rendering Inputs
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
+      adapted_from: null
+- id: section-050
+  title: Identify Common Reconciliation Patterns
+  curriculum_item: Identify Common Reconciliation Patterns
+  capstone: false
+  section_quiz: false
+  modules:
+  - id: module-01
+    title: Drift, Refresh, Ignore Rules And Reconciliation Patterns
+    objectives:
+    - Distinguish refresh and comparison from synchronization.
+    - Explain live drift and source-driven updates.
+    - Evaluate ignore-difference settings and controller-owned fields.
+    - Compare bootstrap composition with ApplicationSet-generated Applications.
+    outline:
+    - Drift, Refresh, Ignore Rules And Reconciliation Patterns
+    playground: false
+    module_lab: false
+    sources:
+    - reading: sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
+      adapted_from: null
