@@ -1,0 +1,300 @@
+schema_version: 1
+kind: question_bank
+id: ats061-domain-review
+course_id: ATS061
+exam_code: CAPA
+status: draft
+provenance: Original practice material; not official examination questions.
+scope:
+  type: domain
+  id: domain-review
+  title: ARGO CD
+placement:
+  position: after
+  reading: sections/section-050/module-01/course-02-summary.md
+questions:
+- id: ats061-domain-review-q01
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain declarative desired state and live-state comparison.
+  source_readings:
+  - sections/section-010/module-01/course-01-argo-cd-desired-state-and-reconciliation.md
+  prompt: What is Argo CD's central responsibility?
+  options:
+  - id: a
+    text: Replacing all Kubernetes controllers.
+    explanation: Native controllers still reconcile their resources.
+  - id: b
+    text: Reconciling declared application resources with live state.
+    explanation: It implements a GitOps-oriented delivery relationship.
+  - id: c
+    text: Building every container image itself automatically.
+    explanation: Image building is a separate pipeline responsibility.
+  correct_option: b
+  explanation: It implements a GitOps-oriented delivery relationship.
+- id: ats061-domain-review-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Separate sync status from resource health.
+  source_readings:
+  - sections/section-010/module-01/course-01-argo-cd-desired-state-and-reconciliation.md
+  prompt: Can an Application be Synced but unhealthy?
+  options:
+  - id: a
+    text: Yes; resources can match desired state while failing operational health.
+    explanation: Alignment and health differ.
+  - id: b
+    text: No; matching YAML guarantees business success.
+    explanation: Configuration can describe an unhealthy workload.
+  - id: c
+    text: No; Synced means every external dependency works.
+    explanation: That is outside the comparison guarantee.
+  correct_option: a
+  explanation: Alignment and health differ.
+- id: ats061-domain-review-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Identify controller, repository and access dependencies.
+  source_readings:
+  - sections/section-010/module-01/course-01-argo-cd-desired-state-and-reconciliation.md
+  prompt: Why can rendering failure prevent reconciliation?
+  options:
+  - id: a
+    text: The repository server is the application packet router.
+    explanation: It is a delivery component.
+  - id: b
+    text: Every Git commit bypasses rendering.
+    explanation: Sources need interpretation.
+  - id: c
+    text: Argo CD needs a valid desired resource set to compare and apply.
+    explanation: Source retrieval and rendering precede cluster changes.
+  correct_option: c
+  explanation: Source retrieval and rendering precede cluster changes.
+- id: ats061-domain-review-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish comparison from synchronization.
+  source_readings:
+  - sections/section-020/module-01/course-01-manual-and-automated-sync-pruning-and-self-healing.md
+  prompt: What does synchronization do beyond comparison?
+  options:
+  - id: a
+    text: Guarantee every database migration is reversible.
+    explanation: External effects have their own contract.
+  - id: b
+    text: Attempt to apply the desired resource relationship.
+    explanation: Comparison alone reports differences.
+  - id: c
+    text: Automatically rebuild all images.
+    explanation: Build is separate.
+  correct_option: b
+  explanation: Comparison alone reports differences.
+- id: ats061-domain-review-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain automated sync, pruning and self-heal as separate choices.
+  source_readings:
+  - sections/section-020/module-01/course-01-manual-and-automated-sync-pruning-and-self-healing.md
+  prompt: Which choice concerns removing tracked live resources absent from desired state?
+  options:
+  - id: a
+    text: Pruning.
+    explanation: Deletion needs deliberate policy.
+  - id: b
+    text: Only self-heal.
+    explanation: Self-heal addresses live drift restoration under its model.
+  - id: c
+    text: Only dashboard refresh.
+    explanation: Presentation does not delete resources.
+  correct_option: a
+  explanation: Deletion needs deliberate policy.
+- id: ats061-domain-review-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Evaluate rollback against the declared source of truth.
+  source_readings:
+  - sections/section-020/module-01/course-01-manual-and-automated-sync-pruning-and-self-healing.md
+  prompt: Why can a live rollback be undone later?
+  options:
+  - id: a
+    text: Argo CD permanently disables all controllers after rollback.
+    explanation: That is not the normal contract.
+  - id: b
+    text: Every prior image contains current database state.
+    explanation: Image history does not preserve external state.
+  - id: c
+    text: The declared source can still specify the newer state.
+    explanation: Reconciliation follows source ownership.
+  correct_option: c
+  explanation: Reconciliation follows source ownership.
+- id: ats061-domain-review-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Read an Application's source, destination and project relationships.
+  source_readings:
+  - sections/section-030/module-01/course-01-application-source-destination-and-project-boundaries.md
+  prompt: What does an Application chiefly connect?
+  options:
+  - id: a
+    text: Only a dashboard panel with no resources.
+    explanation: The Application governs delivery state.
+  - id: b
+    text: A desired source with a destination and delivery policy.
+    explanation: It is the reconciliation unit.
+  - id: c
+    text: Every cluster's storage device automatically.
+    explanation: Storage attachment is separate.
+  correct_option: b
+  explanation: It is the reconciliation unit.
+- id: ats061-domain-review-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain revision, path, namespace and cluster identity.
+  source_readings:
+  - sections/section-030/module-01/course-01-application-source-destination-and-project-boundaries.md
+  prompt: Why review both source revision and path?
+  options:
+  - id: a
+    text: They jointly identify the input to manifest generation.
+    explanation: A repository alone does not select exact content.
+  - id: b
+    text: The path encrypts the Git history.
+    explanation: It is source selection.
+  - id: c
+    text: Every revision always contains the same files.
+    explanation: Repository content changes.
+  correct_option: a
+  explanation: A repository alone does not select exact content.
+- id: ats061-domain-review-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish AppProject restrictions from destination RBAC.
+  source_readings:
+  - sections/section-030/module-01/course-01-application-source-destination-and-project-boundaries.md
+  prompt: Does an AppProject allowlist replace destination Kubernetes RBAC?
+  options:
+  - id: a
+    text: Yes; any project member can bypass the API authorizer.
+    explanation: The destination still enforces permissions.
+  - id: b
+    text: Yes; namespace spelling grants every verb.
+    explanation: Names do not establish authority.
+  - id: c
+    text: No; both boundaries matter.
+    explanation: Project policy and API authority constrain different stages.
+  correct_option: c
+  explanation: Project policy and API authority constrain different stages.
+- id: ats061-domain-review-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain Helm template rendering versus Helm release lifecycle.
+  source_readings:
+  - sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
+  prompt: What is Helm's usual role inside Argo CD generation?
+  options:
+  - id: a
+    text: Scraping application metrics.
+    explanation: That is observability collection.
+  - id: b
+    text: Rendering chart templates into desired manifests.
+    explanation: Argo CD then owns application reconciliation.
+  - id: c
+    text: Owning every resulting Helm release lifecycle automatically.
+    explanation: That is not the standard rendering model.
+  correct_option: b
+  explanation: Argo CD then owns application reconciliation.
+- id: ats061-domain-review-q11
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain Kustomize bases, overlays and transformations.
+  source_readings:
+  - sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
+  prompt: What does a Kustomize overlay do?
+  options:
+  - id: a
+    text: Specialize a base through declared transformations or patches.
+    explanation: It generates a resource set without editing every base copy.
+  - id: b
+    text: Automatically grant destination administrator access.
+    explanation: Authority is separate.
+  - id: c
+    text: Guarantee no rendered field can be incorrect.
+    explanation: Transformations need review.
+  correct_option: a
+  explanation: It generates a resource set without editing every base copy.
+- id: ats061-domain-review-q12
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Evaluate deterministic output and secret exposure in generation.
+  source_readings:
+  - sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
+  prompt: Why avoid nondeterministic generated values?
+  options:
+  - id: a
+    text: They prevent all network packets.
+    explanation: That is unrelated.
+  - id: b
+    text: Every random value is automatically a Secret.
+    explanation: Confidentiality depends on handling.
+  - id: c
+    text: They can create repeated comparison drift.
+    explanation: Successive renders should represent stable intent.
+  correct_option: c
+  explanation: Successive renders should represent stable intent.
+- id: ats061-domain-review-q13
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Distinguish refresh and comparison from synchronization.
+  source_readings:
+  - sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
+  prompt: What does a refresh principally seek?
+  options:
+  - id: a
+    text: A new application image build universally.
+    explanation: Build is separate.
+  - id: b
+    text: Updated comparison information under the supported behavior.
+    explanation: It is distinct from applying a sync.
+  - id: c
+    text: Automatic deletion of every resource.
+    explanation: Deletion requires its own policy.
+  correct_option: b
+  explanation: It is distinct from applying a sync.
+- id: ats061-domain-review-q14
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain live drift and source-driven updates.
+  source_readings:
+  - sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
+  prompt: What is a risk of broad ignore-difference rules?
+  options:
+  - id: a
+    text: Meaningful security or configuration drift can be hidden.
+    explanation: Ignored fields need a justified ownership reason.
+  - id: b
+    text: They encrypt every ignored field.
+    explanation: Comparison settings do not supply confidentiality.
+  - id: c
+    text: They create missing API permissions.
+    explanation: Authorization is separate.
+  correct_option: a
+  explanation: Ignored fields need a justified ownership reason.
+- id: ats061-domain-review-q15
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Compare bootstrap composition with ApplicationSet-generated Applications.
+  source_readings:
+  - sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
+  prompt: Why review an ApplicationSet's generated ownership?
+  options:
+  - id: a
+    text: It permanently disables Git updates.
+    explanation: Generation follows configured inputs.
+  - id: b
+    text: It automatically makes every application healthy.
+    explanation: Health remains a separate outcome.
+  - id: c
+    text: The generator can restore child Application configuration.
+    explanation: Editing a child directly can conflict with its parent source.
+  correct_option: c
+  explanation: Editing a child directly can conflict with its parent source.
