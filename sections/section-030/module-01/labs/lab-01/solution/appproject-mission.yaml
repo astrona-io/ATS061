@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: mission
+  namespace: argocd
+spec:
+  sourceRepos:
+  - http://git-source.argocd.svc:8080/repo.git
+  destinations:
+  - server: https://kubernetes.default.svc
+    namespace: starfleet
+  namespaceResourceWhitelist:
+  - group: apps
+    kind: Deployment
+  - group: ''
+    kind: Service
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mission
+  namespace: argocd
+spec:
+  project: mission
+  source:
+    repoURL: http://git-source.argocd.svc:8080/repo.git
+    targetRevision: main
+    path: plain
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starfleet
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

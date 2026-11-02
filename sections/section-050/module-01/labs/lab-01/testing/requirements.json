@@ -1,0 +1,49 @@
+{
+  "context": "kind-astro-ats-061-lab-050-01-01",
+  "resources": [
+    {
+      "kind": "application",
+      "name": "mission",
+      "namespace": "argocd",
+      "expected": {
+        "apiVersion": "argoproj.io/v1alpha1",
+        "kind": "Application",
+        "metadata": {
+          "name": "mission",
+          "namespace": "argocd"
+        },
+        "spec": {
+          "project": "default",
+          "source": {
+            "repoURL": "http://git-source.argocd.svc:8080/repo.git",
+            "targetRevision": "main",
+            "path": "plain"
+          },
+          "destination": {
+            "server": "https://kubernetes.default.svc",
+            "namespace": "starfleet"
+          },
+          "syncPolicy": {
+            "automated": {
+              "prune": true,
+              "selfHeal": true
+            },
+            "syncOptions": [
+              "RespectIgnoreDifferences=true"
+            ]
+          },
+          "ignoreDifferences": [
+            {
+              "group": "apps",
+              "kind": "Deployment",
+              "jsonPointers": [
+                "/metadata/annotations/lab.example.io~1review"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "behavior": []
+}
