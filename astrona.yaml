@@ -1,9 +1,8 @@
-# Reading-only content; YAML knowledge checks have a separate index.
 training:
   id: ATS061
   title: 'CAPA: ARGO CD'
-  description: 'Detailed reading material and reusable YAML knowledge checks for CAPA: ARGO CD. Technical
-    content remains draft. No labs or playgrounds.'
+  description: 'Detailed reading material and reusable YAML knowledge checks for CAPA:
+    ARGO CD. Technical content remains draft. Private playgrounds and draft independent labs are included.'
   certification:
     name: Certified Argo Project Associate
     code: CAPA
@@ -36,7 +35,7 @@ modules:
 - id: module-010
   title: Understand Argo CD Fundamentals
   description: Developed reading and reasoning for Understand Argo CD Fundamentals.
-  draft: true
+  status: alpha
   content:
   - type: reading
     title: Understand Argo CD Fundamentals
@@ -48,12 +47,34 @@ modules:
     title: Argo CD Desired State And Reconciliation
     path: sections/section-010/module-01/course-01-argo-cd-desired-state-and-reconciliation.md
   - type: reading
+    title: Reconcile A Git Sourced Application — Task
+    path: sections/section-010/module-01/labs/lab-01/question.md
+  - type: lab
+    title: Reconcile A Git Sourced Application
+    path: sections/section-010/module-01/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Reconcile the declared application from the internal Git source.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Reconcile A Git Sourced Application — Solution
+    path: sections/section-010/module-01/labs/lab-01/solution.md
+  - type: reading
+    title: 'Guided Practice: Reconcile A Git Sourced Application'
+    path: sections/section-010/module-01/course-02-guided-practice.md
+  - type: reading
     title: Summary
-    path: sections/section-010/module-01/course-02-summary.md
+    path: sections/section-010/module-01/course-03-summary.md
 - id: module-020
   title: Synchronize Applications Using Argo CD
-  description: Developed reading and reasoning for Synchronize Applications Using Argo CD.
-  draft: true
+  description: Developed reading and reasoning for Synchronize Applications Using
+    Argo CD.
+  status: alpha
   content:
   - type: reading
     title: Synchronize Applications Using Argo CD
@@ -65,12 +86,33 @@ modules:
     title: Manual And Automated Sync, Pruning And Self-Healing
     path: sections/section-020/module-01/course-01-manual-and-automated-sync-pruning-and-self-healing.md
   - type: reading
+    title: Repair Live Drift With Self Healing — Task
+    path: sections/section-020/module-01/labs/lab-01/question.md
+  - type: lab
+    title: Repair Live Drift With Self Healing
+    path: sections/section-020/module-01/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Reconcile the declared application from the internal Git source.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Repair Live Drift With Self Healing — Solution
+    path: sections/section-020/module-01/labs/lab-01/solution.md
+  - type: reading
+    title: 'Guided Practice: Repair Live Drift With Self Healing'
+    path: sections/section-020/module-01/course-02-guided-practice.md
+  - type: reading
     title: Summary
-    path: sections/section-020/module-01/course-02-summary.md
+    path: sections/section-020/module-01/course-03-summary.md
 - id: module-030
   title: Use Argo CD Application
   description: Developed reading and reasoning for Use Argo CD Application.
-  draft: true
+  status: alpha
   content:
   - type: reading
     title: Use Argo CD Application
@@ -82,12 +124,34 @@ modules:
     title: Application Source, Destination And Project Boundaries
     path: sections/section-030/module-01/course-01-application-source-destination-and-project-boundaries.md
   - type: reading
+    title: Constrain Application Source And Destination — Task
+    path: sections/section-030/module-01/labs/lab-01/question.md
+  - type: lab
+    title: Constrain Application Source And Destination
+    path: sections/section-030/module-01/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Reconcile the declared application from the internal Git source.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Constrain Application Source And Destination — Solution
+    path: sections/section-030/module-01/labs/lab-01/solution.md
+  - type: reading
+    title: 'Guided Practice: Constrain Application Source And Destination'
+    path: sections/section-030/module-01/course-02-guided-practice.md
+  - type: reading
     title: Summary
-    path: sections/section-030/module-01/course-02-summary.md
+    path: sections/section-030/module-01/course-03-summary.md
 - id: module-040
   title: Configure Argo CD with Helm and Kustomize
-  description: Developed reading and reasoning for Configure Argo CD with Helm and Kustomize.
-  draft: true
+  description: Developed reading and reasoning for Configure Argo CD with Helm and
+    Kustomize.
+  status: alpha
   content:
   - type: reading
     title: Configure Argo CD with Helm and Kustomize
@@ -99,12 +163,52 @@ modules:
     title: Helm And Kustomize As Argo CD Rendering Inputs
     path: sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
   - type: reading
+    title: Render A Helm Source In Argo CD — Task
+    path: sections/section-040/module-01/labs/lab-01/question.md
+  - type: lab
+    title: Render A Helm Source In Argo CD
+    path: sections/section-040/module-01/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Reconcile the declared application from the internal Git source.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Render A Helm Source In Argo CD — Solution
+    path: sections/section-040/module-01/labs/lab-01/solution.md
+  - type: reading
+    title: Render A Kustomize Overlay In Argo CD — Task
+    path: sections/section-040/module-01/labs/lab-02/question.md
+  - type: lab
+    title: Render A Kustomize Overlay In Argo CD
+    path: sections/section-040/module-01/labs/lab-02
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Reconcile the declared application from the internal Git source.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Render A Kustomize Overlay In Argo CD — Solution
+    path: sections/section-040/module-01/labs/lab-02/solution.md
+  - type: reading
+    title: 'Guided Practice: Render A Helm Source In Argo CD'
+    path: sections/section-040/module-01/course-02-guided-practice.md
+  - type: reading
     title: Summary
-    path: sections/section-040/module-01/course-02-summary.md
+    path: sections/section-040/module-01/course-03-summary.md
 - id: module-050
   title: Identify Common Reconciliation Patterns
-  description: Developed reading and reasoning for Identify Common Reconciliation Patterns.
-  draft: true
+  description: Developed reading and reasoning for Identify Common Reconciliation
+    Patterns.
+  status: alpha
   content:
   - type: reading
     title: Identify Common Reconciliation Patterns
@@ -116,5 +220,26 @@ modules:
     title: Drift, Refresh, Ignore Rules And Reconciliation Patterns
     path: sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
   - type: reading
+    title: Scope An Ignore Difference Exception — Task
+    path: sections/section-050/module-01/labs/lab-01/question.md
+  - type: lab
+    title: Scope An Ignore Difference Exception
+    path: sections/section-050/module-01/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Reconcile the declared application from the internal Git source.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Scope An Ignore Difference Exception — Solution
+    path: sections/section-050/module-01/labs/lab-01/solution.md
+  - type: reading
+    title: 'Guided Practice: Scope An Ignore Difference Exception'
+    path: sections/section-050/module-01/course-02-guided-practice.md
+  - type: reading
     title: Summary
-    path: sections/section-050/module-01/course-02-summary.md
+    path: sections/section-050/module-01/course-03-summary.md
