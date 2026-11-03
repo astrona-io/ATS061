@@ -1,0 +1,48 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-lab-010-03-01
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: source-path
+    description: The Application bridge-cam compares the directory workloads/beta.
+    type: file
+    source: validation/validate-source-path.sh
+    hint: Compare status.sync.comparedTo.source.path with the directory that holds the corrected workload.
+  - name: beta-delivered
+    description: The Deployment beta runs one available replica and is tracked by bridge-cam.
+    type: file
+    source: validation/validate-beta-delivered.sh
+    hint: Argo CD must create the Deployment beta in starfleet. Look at the tracking-id annotation of the Deployment.
+  - name: bad-image-pruned
+    description: The Deployment bad-image is removed by Argo CD.
+    type: file
+    source: validation/validate-bad-image-pruned.sh
+    hint: A resource that is live but no longer in the source needs pruning. Look at the syncPolicy of the Application.
+  - name: synced-and-healthy
+    description: The Application is Synced and Healthy.
+    type: file
+    source: validation/validate-synced-and-healthy.sh
+    hint: Read the sync status and the health status separately. Both must be fixed.
+teardown:
+  keepCluster: false

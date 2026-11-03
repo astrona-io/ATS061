@@ -1,0 +1,277 @@
+# Knowledge check for section 030. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats061-030
+course_id: ATS061
+exam_code: CAPA
+status: draft
+provenance: Original practice material written for this course; not official exam questions.
+scope:
+  type: section
+  id: section-030
+  title: Use Argo CD Application
+questions:
+- id: ats061-030-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Identify how Argo CD detects the source type of a Git path"
+  source_readings:
+  - sections/section-030/module-02/course-01-directory-helm-and-kustomize-sources.md
+  prompt: "An Application points at the Git path `plain`. The directory holds `app.yaml` and a `kustomization.yaml` file, and the Application sets no `helm`, `kustomize` or `directory` field. How does Argo CD render the path?"
+  options:
+  - id: a
+    text: "Argo CD applies `app.yaml` as a plain directory and ignores `kustomization.yaml`."
+    explanation: "The presence of a `kustomization.yaml` file makes Argo CD choose Kustomize. The file is not skipped."
+  - id: b
+    text: "Argo CD refuses the path, because a source needs an explicit tool field."
+    explanation: "The tool field is optional. Argo CD detects the tool from the files in the path."
+  - id: c
+    text: "Argo CD detects the Kustomize file and renders the path with Kustomize."
+    explanation: "Correct. Without an explicit tool field, Argo CD looks at the path content, and a `kustomization.yaml` file selects Kustomize."
+  - id: d
+    text: "Argo CD renders the path with Helm, because Helm is the default tool."
+    explanation: "Helm is chosen only when the path holds a `Chart.yaml` file. It is not the default for every path."
+  correct_option: c
+  explanation: "Tool detection follows the files in the path unless the Application names a tool. A `kustomization.yaml` file selects Kustomize and a `Chart.yaml` file selects Helm."
+- id: ats061-030-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Diagnose an Application that the project refuses"
+  source_readings:
+  - sections/section-030/module-01/course-04-appproject-restrictions.md
+  prompt: "A new Application in the project `crew` uses a Git URL that is not listed in the `sourceRepos` of `crew`. The manifest was applied without error. What does the learner see?"
+  options:
+  - id: a
+    text: "The Application exists but reports an error condition about the project and does not sync."
+    explanation: "Correct. The API accepts the object, and Argo CD reports the project refusal in the status of the Application."
+  - id: b
+    text: "The `kubectl apply` command fails, because Kubernetes checks the project."
+    explanation: "Kubernetes does not know the rules of an AppProject. The refusal happens in Argo CD after the object exists."
+  - id: c
+    text: "The Application syncs, and Argo CD only logs a warning about the repository."
+    explanation: "A project restriction is enforced. The Application does not deploy."
+  - id: d
+    text: "Argo CD moves the Application to the project `default` so that it can sync."
+    explanation: "Argo CD never changes the project of an Application on its own."
+  correct_option: a
+  explanation: "An AppProject is enforced by Argo CD, not by the Kubernetes API. The Application is stored and its status shows why it cannot sync."
+- id: ats061-030-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Explain what destination.namespace does for manifests with a namespace"
+  source_readings:
+  - sections/section-030/module-01/course-01-application-source-destination-and-project-boundaries.md
+  prompt: "The manifests in a Git path all contain `metadata.namespace: starfleet`. The Application sets `destination.namespace: outpost`. In which namespace do the objects end up?"
+  options:
+  - id: a
+    text: "In `outpost`, because the destination always rewrites the namespace."
+    explanation: "The destination is only a default for objects that have no namespace of their own."
+  - id: b
+    text: "In both namespaces, because Argo CD creates a copy for each."
+    explanation: "Argo CD creates each object once, in one namespace."
+  - id: c
+    text: "Nowhere, because the two values conflict and the sync fails."
+    explanation: "A manifest namespace that differs from the destination is not an error by itself. The project decides what is allowed."
+  - id: d
+    text: "In `starfleet`, because the namespace written in the manifest wins."
+    explanation: "Correct. The destination namespace applies only to namespaced objects that do not name a namespace."
+  correct_option: d
+  explanation: "A namespace inside a manifest wins over `destination.namespace`. The destination fills in the namespace only for objects without one."
+- id: ats061-030-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Choose the project field that controls cluster-scoped kinds"
+  source_readings:
+  - sections/section-030/module-01/course-04-appproject-restrictions.md
+  prompt: "A project `bridge` sets `namespaceResourceWhitelist` to Deployment and Service and sets no `clusterResourceWhitelist`. An Application in `bridge` has a path with a Deployment and a `ClusterRole`. What happens at sync?"
+  options:
+  - id: a
+    text: "Both objects are created, because the namespaced whitelist also covers cluster-scoped kinds."
+    explanation: "The two whitelists are separate. The namespaced list does not cover cluster-scoped kinds."
+  - id: b
+    text: "The `ClusterRole` is refused because it is not in the cluster whitelist, and the Application reports an error."
+    explanation: "Correct. A cluster-scoped kind that is missing from `clusterResourceWhitelist` is refused."
+  - id: c
+    text: "The `ClusterRole` is created later, because cluster-scoped kinds sync in a later wave."
+    explanation: "Sync waves order objects. They never override the kinds that a project allows."
+  - id: d
+    text: "The `ClusterRole` is created in the namespace `starfleet`, because it has no namespace."
+    explanation: "A cluster-scoped kind has no namespace. It cannot be moved into one."
+  correct_option: b
+  explanation: "Namespaced and cluster-scoped kinds have separate lists. A cluster-scoped kind needs an entry in `clusterResourceWhitelist`."
+- id: ats061-030-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Apply the precedence of Helm value sources"
+  source_readings:
+  - sections/section-030/module-02/course-02-parameter-overrides.md
+  prompt: "A chart has `replicas: 2` in `values.yaml`. The Application adds `valueFiles` with a file that sets `replicas: 3`, a `valuesObject` that sets `replicas: 4` and a `parameters` entry for `replicas` with the value `5`. How many replicas does the Deployment get?"
+  options:
+  - id: a
+    text: "2, because the chart default is always used for a Deployment."
+    explanation: "The chart default has the lowest precedence."
+  - id: b
+    text: "3, because a values file is the most specific source."
+    explanation: "A values file is below `valuesObject` and parameters."
+  - id: c
+    text: "5, because parameters have the highest precedence."
+    explanation: "Correct. The order from highest to lowest is parameters, `valuesObject`, `values`, `valueFiles` and the chart `values.yaml`."
+  - id: d
+    text: "4, because `valuesObject` is the newest field."
+    explanation: "`valuesObject` is below parameters in the documented order."
+  correct_option: c
+  explanation: "Argo CD merges Helm values in a fixed order. Parameters win over `valuesObject`, which wins over `values`, value files and the chart defaults."
+- id: ats061-030-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Override a Kustomize replica count in the Application"
+  source_readings:
+  - sections/section-030/module-02/course-02-parameter-overrides.md
+  prompt: "A team wants Argo CD to run the Deployment `api` with 4 replicas from a Kustomize path without a commit. Which Application field does that?"
+  options:
+  - id: a
+    text: "`spec.source.kustomize.replicas` with the name `api` and the count `4`."
+    explanation: "Correct. The `replicas` list of the Kustomize source has a name and a count for each Deployment."
+  - id: b
+    text: "`spec.source.helm.parameters` with the name `replicas`."
+    explanation: "Helm parameters apply only to a Helm source."
+  - id: c
+    text: "`spec.destination.replicas` with the value `4`."
+    explanation: "The destination has no replica field. It names a cluster and a namespace."
+  - id: d
+    text: "`spec.ignoreDifferences` with the pointer `/spec/replicas`."
+    explanation: "That field hides a difference. It does not set a value."
+  correct_option: a
+  explanation: "The Kustomize source has its own override fields: name prefix, name suffix, namespace, images, replicas and common labels."
+- id: ats061-030-q07
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Explain what ignoreDifferences does during a sync"
+  source_readings:
+  - sections/section-030/module-02/course-03-ignoring-expected-differences.md
+  prompt: "An Application ignores `/spec/replicas` of Deployments with `ignoreDifferences` and has no sync options. An operator scales the Deployment to 5 by hand, and the Application stays `Synced`. Later, someone changes the image in Git and a sync runs. Git says 3 replicas. What are the replicas after the sync?"
+  options:
+  - id: a
+    text: "5, because the ignored field is never written by Argo CD."
+    explanation: "By default the sync applies the whole desired manifest, including the ignored field."
+  - id: b
+    text: "5, because the Application stays `Synced` during the sync."
+    explanation: "The sync status before the sync does not decide what the sync writes."
+  - id: c
+    text: "The sync fails, because the live replicas differ from Git."
+    explanation: "A difference in an ignored field is not a failure."
+  - id: d
+    text: "3, because the sync writes the desired manifest unless `RespectIgnoreDifferences=true` is set."
+    explanation: "Correct. The ignored difference affects the comparison only. The sync option keeps the field out of the applied manifest for objects that already exist."
+  correct_option: d
+  explanation: "`ignoreDifferences` changes the comparison. A sync that runs for another reason still applies the desired value unless `RespectIgnoreDifferences=true` is set."
+- id: ats061-030-q08
+  type: single_choice
+  difficulty: beginner
+  learning_objective: "Read the owner of an object from the tracking annotation"
+  source_readings:
+  - sections/section-030/module-03/course-01-resource-tracking.md
+  prompt: "A Deployment has the annotation `argocd.argoproj.io/tracking-id` with the value `alpha:apps/Deployment:starfleet/alpha`. What does the value tell you?"
+  options:
+  - id: a
+    text: "The Deployment `alpha` was created by `kubectl` in the namespace `apps`."
+    explanation: "The first field is the Application name, and `apps` is the API group."
+  - id: b
+    text: "The Application `alpha` owns the Deployment `alpha` in the namespace `starfleet`."
+    explanation: "Correct. The format is the Application name, then group, kind, namespace and name of the object."
+  - id: c
+    text: "The Application `starfleet` owns the Deployment in the namespace `alpha`."
+    explanation: "The Application name comes first, and the namespace comes after the kind."
+  - id: d
+    text: "The Deployment belongs to the project `alpha`."
+    explanation: "The annotation names an Application, not a project."
+  correct_option: b
+  explanation: "The tracking value has the form Application name, colon, group, kind, namespace and object name. Argo CD uses it to decide which objects belong to an Application."
+- id: ats061-030-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Remove an Application without removing its workloads"
+  source_readings:
+  - sections/section-030/module-03/course-02-finalizers-and-deletion.md
+  prompt: "An Application has the finalizer `resources-finalizer.argocd.argoproj.io`. The team wants to delete the Application and keep the running Deployment. What should they do?"
+  options:
+  - id: a
+    text: "Delete the Deployment first, then delete the Application."
+    explanation: "That removes the workload, which the team wants to keep."
+  - id: b
+    text: "Run `kubectl delete` on the Application and wait, because workloads are never deleted."
+    explanation: "With the finalizer present, deleting the Application deletes its resources."
+  - id: c
+    text: "Remove the finalizer from the Application, then delete the Application."
+    explanation: "Correct. Without the finalizer, deleting the Application leaves the resources in the cluster."
+  - id: d
+    text: "Set `automated.prune` to `false` and delete the Application."
+    explanation: "Pruning applies to syncs. It does not change what a delete with a finalizer does."
+  correct_option: c
+  explanation: "The finalizer makes the deletion cascade to the resources. An Application without it is removed alone, and its workloads keep running."
+- id: ats061-030-q10
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Choose the destination of an app-of-apps parent"
+  source_readings:
+  - sections/section-030/module-03/course-03-app-of-apps.md
+  prompt: "A parent Application syncs the path `apps`, which holds child Application manifests. Which destination namespace is correct for the parent, and why?"
+  options:
+  - id: a
+    text: "`argocd`, because Application objects are namespaced resources that the controller reads from that namespace."
+    explanation: "Correct. The parent creates Application objects, so its destination is the namespace where Applications live."
+  - id: b
+    text: "`starfleet`, because the children deploy their workloads there."
+    explanation: "The workload namespace belongs to the children, not to the parent."
+  - id: c
+    text: "`default`, because every Application object must live in the default namespace."
+    explanation: "Applications live in the namespace of Argo CD, not in `default`."
+  - id: d
+    text: "No namespace, because Application objects are cluster-scoped."
+    explanation: "An Application is a namespaced resource."
+  correct_option: a
+  explanation: "The parent deploys Application manifests, so its destination is the namespace of Argo CD. Each child deploys the workloads."
+- id: ats061-030-q11
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: "Interpret an Application with a failing rollout"
+  source_readings:
+  - sections/section-030/module-03/course-04-application-health.md
+  prompt: "An Application deploys a Deployment whose image tag does not exist. Two minutes after the sync, `status.sync.status` is `Synced`. The pod shows `ImagePullBackOff`. What does `status.health.status` show, and why?"
+  options:
+  - id: a
+    text: "`Healthy`, because the sync succeeded."
+    explanation: "Health and sync are independent. A successful sync says nothing about the pods."
+  - id: b
+    text: "`Progressing`, because the Deployment has not exceeded its progress deadline yet."
+    explanation: "Correct. The Deployment reports a failure only after the progress deadline, which defaults to ten minutes."
+  - id: c
+    text: "`Missing`, because the pod does not run."
+    explanation: "`Missing` means an object does not exist in the cluster. The Deployment exists."
+  - id: d
+    text: "`Degraded` at once, because Argo CD reads the pod state directly."
+    explanation: "Argo CD follows the status that Kubernetes publishes for the Deployment, which stays in progress until the deadline."
+  correct_option: b
+  explanation: "Health follows Kubernetes status. A rollout that cannot finish stays `Progressing` until the progress deadline passes, and only then becomes `Degraded`."
+- id: ats061-030-q12
+  type: single_choice
+  difficulty: advanced
+  learning_objective: "Predict the effect of removing a child manifest from an app-of-apps path"
+  source_readings:
+  - sections/section-030/module-03/course-03-app-of-apps.md
+  prompt: "A parent Application has automated sync with `prune: true` and syncs the path `apps`. Each child Application has automated sync and the finalizer `resources-finalizer.argocd.argoproj.io`. A commit removes `beta.yaml` from the path. What happens to the workloads of `beta`?"
+  options:
+  - id: a
+    text: "Nothing, because the parent never deletes objects that a child manages."
+    explanation: "The parent owns the child Application object and prunes it."
+  - id: b
+    text: "They stay, because the finalizer only runs when an operator deletes the Application by hand."
+    explanation: "The finalizer runs for every deletion, including a prune by the parent."
+  - id: c
+    text: "They stay, because the child Application restores its own manifest from the cluster."
+    explanation: "A pruned Application is deleted. It does not restore itself."
+  - id: d
+    text: "The parent prunes the child Application, and the finalizer of the child deletes the workloads."
+    explanation: "Correct. The prune deletes the child object, and the finalizer makes that deletion cascade to the workloads."
+  correct_option: d
+  explanation: "A parent with prune deletes a child whose manifest leaves Git. With the finalizer on the child, the workloads are deleted too."

@@ -1,0 +1,320 @@
+# Knowledge check for section 040. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats061-040
+course_id: ATS061
+exam_code: CAPA
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-040
+  title: Configure Argo CD with Helm and Kustomize
+questions:
+- id: ats061-040-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Name the component that renders Helm and Kustomize sources
+  source_readings:
+  - sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
+  prompt: An Application points at a Git directory. Which Argo CD component renders
+    the manifests from that directory?
+  options:
+  - id: a
+    text: The application controller, which runs `helm template` and `kustomize build`
+      while it syncs.
+    explanation: The controller compares and applies. It asks another component for
+      the rendered manifests.
+  - id: b
+    text: The API server, when a user opens the Application in the interface.
+    explanation: The API server serves requests. Rendering does not depend on a user
+      opening the Application.
+  - id: c
+    text: The repository server, which clones the repository and renders the manifests.
+    explanation: Correct. The repository server renders, and the controller compares
+      the result with the cluster and applies it.
+  - id: d
+    text: The kubelet on each node, when it receives the manifests.
+    explanation: The kubelet runs pods. It knows nothing about Helm or Kustomize.
+  correct_option: c
+  explanation: The repository server renders. The controller compares and applies
+    the rendered result.
+- id: ats061-040-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Predict the tool Argo CD detects for a directory
+  source_readings:
+  - sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
+  prompt: A Git directory holds a `Chart.yaml` and a `kustomization.yaml`. The Application
+    sets no tool field. What does `status.sourceType` show?
+  options:
+  - id: a
+    text: "`Directory`, because two tool files cancel each other."
+    explanation: Detection does not cancel. The first matching tool file wins.
+  - id: b
+    text: "`Kustomize`, because Kustomize always has priority."
+    explanation: Detection checks for `Chart.yaml` first, so Kustomize does not win
+      here.
+  - id: c
+    text: "`Plugin`, because the choice is ambiguous."
+    explanation: A plugin needs its own configuration. Ambiguity does not select one.
+  - id: d
+    text: "`Helm`, because `Chart.yaml` selects Helm and is checked first."
+    explanation: Correct. A `Chart.yaml` selects Helm. Kustomize is chosen only without
+      one.
+  correct_option: d
+  explanation: Tool detection looks for `Chart.yaml` first, then for a kustomization
+    file, and otherwise uses the directory tool.
+- id: ats061-040-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Explain that Argo CD does not create Helm releases
+  source_readings:
+  - sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
+  prompt: A learner runs `helm list -A` after Argo CD deployed a chart and finds no
+    release. What explains this?
+  options:
+  - id: a
+    text: Argo CD renders the chart with `helm template` and applies the manifests
+      itself, so no release Secret exists.
+    explanation: Correct. Argo CD uses Helm only as a template engine and records
+      no release.
+  - id: b
+    text: The release is stored in the `argocd` namespace and hidden from `helm list`.
+    explanation: No release object is created in any namespace.
+  - id: c
+    text: The sync failed, so Helm removed the release.
+    explanation: The Application can be healthy with no release at all.
+  - id: d
+    text: Helm lists releases only for charts from a registry.
+    explanation: The source of the chart does not change this. Argo CD never installs
+      releases.
+  correct_option: a
+  explanation: Argo CD applies rendered manifests. It creates no Helm release.
+- id: ats061-040-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Apply Helm value precedence
+  source_readings:
+  - sections/section-040/module-02/course-01-helm-value-sources-and-precedence.md
+  prompt: 'A chart sets `replicas: 2`. The Application lists `valueFiles: [values-prod.yaml]`
+    with `replicas: 3`, a `valuesObject` with `replicas: 5` and a parameter `replicas=4`.
+    How many replicas does the Deployment get?'
+  options:
+  - id: a
+    text: 2, because the chart default is the safest value.
+    explanation: The chart default is the weakest source.
+  - id: b
+    text: 3, because a file in Git is the most reviewed source.
+    explanation: Review does not change precedence. A values file is weaker than inline
+      values.
+  - id: c
+    text: 5, because `valuesObject` is the strongest source.
+    explanation: "`valuesObject` is stronger than a file, but parameters are stronger
+      still."
+  - id: d
+    text: 4, because parameters override the values object, the files and the chart.
+    explanation: Correct. The order from weakest to strongest is chart values, files,
+      values, values object, parameters.
+  correct_option: d
+  explanation: Parameters win over every other Helm source.
+- id: ats061-040-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Diagnose a missing values file
+  source_readings:
+  - sections/section-040/module-02/course-01-helm-value-sources-and-precedence.md
+  prompt: 'An Application lists `valueFiles: [values-production.yaml]`, but the chart
+    has only `values-prod.yaml`. The Deployment from an earlier version still runs.
+    What does Argo CD report?'
+  options:
+  - id: a
+    text: The Application is `Synced` and the missing file is ignored.
+    explanation: 'A missing file is ignored only with `ignoreMissingValueFiles: true`.'
+  - id: b
+    text: A `ComparisonError` condition and the sync status `Unknown`, with the live
+      Deployment unchanged.
+    explanation: Correct. The render fails, so Argo CD cannot compare, and it changes
+      nothing in the cluster.
+  - id: c
+    text: The Deployment is deleted, because the render is empty.
+    explanation: A failed render is not an empty render. Nothing is pruned.
+  - id: d
+    text: A `SyncError` condition and the health status `Degraded`.
+    explanation: The failure happens before a sync starts, and health describes live
+      objects.
+  correct_option: b
+  explanation: A render error shows as `ComparisonError` with the sync status `Unknown`
+    and leaves the cluster unchanged.
+- id: ats061-040-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Predict where objects land when the chart sets a namespace
+  source_readings:
+  - sections/section-040/module-02/course-02-release-names-namespaces-crds-hooks-and-determinism.md
+  prompt: 'The chart templates write `namespace: starfleet`. The Application destination
+    namespace is `outpost`. Where do the objects go?'
+  options:
+  - id: a
+    text: To `outpost`, because the destination always overrides the manifests.
+    explanation: The destination namespace applies only to objects without a namespace.
+  - id: b
+    text: To `starfleet`, because a namespace written in a manifest is kept.
+    explanation: Correct. Argo CD does not rewrite namespaces that the manifests set.
+  - id: c
+    text: To both namespaces, because Argo CD copies the objects.
+    explanation: Argo CD applies each object once.
+  - id: d
+    text: Nowhere, because the namespaces differ and the sync fails.
+    explanation: A different namespace is not an error for objects that name their
+      own.
+  correct_option: b
+  explanation: Argo CD keeps a namespace written in a manifest.
+- id: ats061-040-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Predict how Argo CD maps Helm hooks
+  source_readings:
+  - sections/section-040/module-02/course-02-release-names-namespaces-crds-hooks-and-determinism.md
+  prompt: A chart has a `post-install` Helm hook Job. How does Argo CD treat it when
+    the chart has no Argo CD hooks?
+  options:
+  - id: a
+    text: It ignores the hook and never creates the Job.
+    explanation: Argo CD maps Helm hooks. It ignores them only when Argo CD hooks
+      exist in the same render.
+  - id: b
+    text: It runs the Job only on the first sync, as Helm does.
+    explanation: Argo CD has no release history, so it cannot tell a first install.
+  - id: c
+    text: It maps the hook to a `PostSync` hook and runs it after each sync.
+    explanation: Correct. `post-install` and `post-upgrade` become `PostSync`.
+  - id: d
+    text: It maps the hook to a `PreSync` hook.
+    explanation: "`pre-install` and `pre-upgrade` map to `PreSync`."
+  correct_option: c
+  explanation: Helm post-install and post-upgrade hooks become PostSync hooks.
+- id: ats061-040-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Name the base resource in a Kustomize override
+  source_readings:
+  - sections/section-040/module-03/course-01-kustomize-overrides-in-the-application.md
+  prompt: The prod overlay adds the prefix `prod-` to the Deployment `git-probe`.
+    Which name goes into `spec.source.kustomize.replicas` of the Application?
+  options:
+  - id: a
+    text: "`git-probe`, the name in the base."
+    explanation: Correct. Overrides use the name that the base defines, before the
+      prefix.
+  - id: b
+    text: "`prod-git-probe`, the name in the cluster."
+    explanation: The cluster name exists only after the build. The override cannot
+      find it.
+  - id: c
+    text: Either name, because Kustomize matches both.
+    explanation: Kustomize matches one name. The wrong one finds no target.
+  - id: d
+    text: Neither, because replicas cannot be overridden.
+    explanation: The `replicas` field exists for this purpose.
+  correct_option: a
+  explanation: Replica overrides and patches target the base name.
+- id: ats061-040-q09
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Fix an inline patch that fails to build
+  source_readings:
+  - sections/section-040/module-03/course-01-kustomize-overrides-in-the-application.md
+  prompt: 'An inline patch for the Deployment `git-probe` has the correct name and
+    the new request, but the build fails with a not-found error. The base sets `namespace:
+    starfleet`. What is the most likely fix?'
+  options:
+  - id: a
+    text: 'Add `metadata.namespace: starfleet` to the patch so that it matches the
+      target.'
+    explanation: Correct. The patch target includes the namespace that the base sets.
+  - id: b
+    text: Use the prefixed name `prod-git-probe`.
+    explanation: Patches run on the base objects, before the prefix is applied.
+  - id: c
+    text: 'Set `forceCommonLabels: true` on the Application.'
+    explanation: That flag concerns labels, not patch targets.
+  - id: d
+    text: Add a hard refresh annotation.
+    explanation: A refresh renders again with the same patch and the same failure.
+  correct_option: a
+  explanation: A patch must carry the namespace of its target.
+- id: ats061-040-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Predict the effect of a common label on selectors
+  source_readings:
+  - sections/section-040/module-03/course-01-kustomize-overrides-in-the-application.md
+  prompt: A team adds `commonLabels` to a running Deployment through the Application.
+    The next sync fails with an immutable field error. Why?
+  options:
+  - id: a
+    text: Labels on pods are always immutable.
+    explanation: Pod labels can change through a new rollout.
+  - id: b
+    text: Argo CD cannot apply labels to Services.
+    explanation: Services accept labels.
+  - id: c
+    text: The Deployment name changed, so Kubernetes rejects the update.
+    explanation: The name did not change. A label does not rename objects.
+  - id: d
+    text: A common label also goes into selectors, and a Deployment selector cannot
+      change after creation.
+    explanation: 'Correct. `labelWithoutSelector: true` avoids this by keeping the
+      label out of selectors.'
+  correct_option: d
+  explanation: Common labels reach selectors unless `labelWithoutSelector` is true.
+- id: ats061-040-q11
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Choose the command that shows what the tools rendered
+  source_readings:
+  - sections/section-040/module-03/course-02-inspecting-rendered-manifests-and-render-failures.md
+  prompt: A team suspects that an Application renders the wrong image tag. Which command
+    prints what the repository server produced, without reading the cluster?
+  options:
+  - id: a
+    text: "`kubectl get deployment -o yaml`, because it shows the same data."
+    explanation: That shows the live object, which may differ from the render.
+  - id: b
+    text: "`argocd app manifests NAME --core`, which prints the rendered manifests."
+    explanation: Correct. It prints the desired manifests from the render, so it shows
+      what Git and the overrides produce.
+  - id: c
+    text: "`argocd app sync NAME --core`, because it prints the render first."
+    explanation: A sync applies changes. Use it only after you read the render.
+  - id: d
+    text: "`helm list`, because Argo CD stores the render in a release."
+    explanation: No release exists.
+  correct_option: b
+  explanation: "`argocd app manifests` prints the rendered manifests."
+- id: ats061-040-q12
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Decide when a hard refresh helps
+  source_readings:
+  - sections/section-040/module-03/course-02-inspecting-rendered-manifests-and-render-failures.md
+  prompt: An Application tracks the branch `main`, and the cached manifests are older
+    than a Git commit that Argo CD has not noticed. What forces a new render?
+  options:
+  - id: a
+    text: Setting the annotation `argocd.argoproj.io/refresh=hard` on the Application.
+    explanation: Correct. A hard refresh drops the cached manifests and renders again.
+  - id: b
+    text: Deleting the pods of the Deployment.
+    explanation: Pods do not hold the render cache.
+  - id: c
+    text: Running `kubectl apply` on the live Deployment.
+    explanation: That changes the live object and leaves the cache as it is.
+  - id: d
+    text: Pinning the branch in `targetRevision` to a tag.
+    explanation: A tag makes the render reproducible, but it does not refresh the
+      cache by itself.
+  correct_option: a
+  explanation: A hard refresh renders again without the cache.

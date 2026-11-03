@@ -29,3 +29,16 @@ ID, not display position, so a later renderer can shuffle choices safely.
 
 The banks contain answer keys and are public learning material, so this is not
 a secure examination bank. Do not treat scores as an official CAPA result.
+
+## Hands-On Coverage
+
+This course has 5 ungraded playgrounds and 6 independent draft labs. Tasks, launch entries and solutions follow their teaching reading. Guided practice precedes the summary. Static and offline checks are separate from live execution, which remains pending.
+
+| Module | Labs in reading order |
+| --- | --- |
+| 010/01 | Reconcile A Git Sourced Application |
+| 020/01 | Repair Live Drift With Self Healing |
+| 030/01 | Constrain Application Source And Destination |
+| 040/01 | Render A Helm Source In Argo CD |
+| 040/01 | Render A Kustomize Overlay In Argo CD |
+| 050/01 | Scope An Ignore Difference Exception |

@@ -1,10 +1,5 @@
----
-draft: true
-exam_objectives:
-- Configure Argo CD with Helm and Kustomize
----
-# Render A Helm Source In Argo CD
+# Render A Helm Chart With A Production Values File
 
-Reconcile the declared application from the internal Git source.
+Create an Application for a Helm chart with a values file and prove that Argo CD rendered it.
 
-The task and solution use a separate pinned kind cluster. Run `testing/smoke.sh` with its private kubeconfig to verify initial rejection and reference success. Static validation is not live evidence. Runtime verification remains pending.
+UNTESTED. This lab was validated statically with `astrona validate -c` and `bash -n` only. It was never booted, so the checks and the reference solution have not been run against a cluster. Run `astrona test` on it before you rely on it.

@@ -1,0 +1,48 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-lab-030-03-01
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: fleet-parent
+    description: "Application fleet is an automated app of apps with the cascading finalizer"
+    type: file
+    source: validation/validate-fleet-parent.sh
+    hint: "Create fleet with path apps, destination namespace argocd, automated prune and selfHeal and the finalizer resources-finalizer.argocd.argoproj.io."
+  - name: children-ready
+    description: "The child Applications alpha and beta are Synced and Healthy"
+    type: file
+    source: validation/validate-children-ready.sh
+    hint: "Let the parent create alpha and beta from the path apps. Do not apply the child manifests yourself."
+  - name: tracking-chain
+    description: "The parent tracks the child Application and the child tracks its Deployment"
+    type: file
+    source: validation/validate-tracking-chain.sh
+    hint: "The child Application alpha must be created by fleet, and the Deployment alpha by the Application alpha."
+  - name: scratch-retired
+    description: "The scratch Application and its Deployment gamma are gone"
+    type: file
+    source: validation/validate-scratch-retired.sh
+    hint: "Delete the Application scratch with kubectl. Its finalizer deletes the Deployment gamma. Do not delete the Deployment directly."
+teardown:
+  keepCluster: false

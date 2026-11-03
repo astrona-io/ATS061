@@ -19,3 +19,8 @@ app=obj('application','mission','argocd')
 assert app['status']['sync']['status']=='Synced' and app['status']['health']['status']=='Healthy', 'Application must reconcile and become healthy'
 workload=obj('deployment','git-probe');assert workload['spec']['replicas']==2 and workload['status'].get('availableReplicas')==2, 'Git workload must be available'
 assert app['status']['sync'].get('revision'), 'Resolved Git revision is absent'
+import re
+assert re.fullmatch(r'[0-9a-f]{40}', app['status']['sync'].get('revision', '')), 'Revision must be a resolved commit SHA'
+kinds = {(r.get('group', ''), r['kind']) for r in app['status'].get('resources', [])}
+assert kinds == {('apps', 'Deployment'), ('', 'Service')}, 'The Application must manage only the Deployment and the Service'
+assert not app['status'].get('conditions'), 'The Application must have no error conditions'

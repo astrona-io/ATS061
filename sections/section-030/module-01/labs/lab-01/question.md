@@ -3,29 +3,29 @@ draft: true
 exam_objectives:
 - Use Argo CD Application
 ---
-# Constrain Application Source And Destination
+# Restrict An Application To One Repository, Namespace And Kinds
 
-Reconcile the declared application from the internal Git source.
+Starfleet lets the `mission` team deploy the `git-probe` service from the internal Git server. The team must not be able to use any other repository, any other namespace or any kind of object besides a Deployment and a Service. You create the project that enforces this and the Application that deploys inside it.
 
 ## Starting state
 
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
+Argo CD is installed in the `argocd` namespace. The Git server at `http://git-source.argocd.svc:8080/repo.git` holds the path `plain` on the branch `main`, with the Deployment and the Service `git-probe` for the namespace `starfleet`. No Application and no project besides `default` exists.
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Connect to the lab cluster:
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-061-lab-030-01-01)"
-test "$(kubectl config current-context)" = "kind-astro-ats-061-lab-030-01-01" || exit 1
-node_name="astro-ats-061-lab-030-01-01-control-plane"
-worker_name="astro-ats-061-lab-030-01-01-worker"
+kubectl config current-context
 ```
 
-Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
+The context must be `kind-astro-ats-061-lab-030-01-01`.
 
 ## Required result
 
-Allow only the private repository, starfleet destination, Deployment and Service resources in an AppProject. The Application must sync successfully inside that boundary.
+- An AppProject `mission` in `argocd` allows exactly one source repository, `http://git-source.argocd.svc:8080/repo.git`, and exactly one destination, the cluster `https://kubernetes.default.svc` with the namespace `starfleet`. It allows exactly two namespaced kinds with `namespaceResourceWhitelist`: `Deployment` of the group `apps` and `Service` of the core group.
+- An Application `mission` in `argocd` belongs to the project `mission`. It uses the repository above, the revision `main` and the path `plain`, and deploys to `https://kubernetes.default.svc` and the namespace `starfleet`. Its sync policy is automated with `prune: true` and `selfHeal: true`.
+- The Application is `Synced` and `Healthy`, has no error conditions, records a commit SHA in `status.sync.revision`, and manages only the Deployment and the Service `git-probe`. The Deployment has `2` available replicas.
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+Create the project before the Application. Do not change the project `default` and do not add any other repository, destination or kind.

@@ -1,0 +1,56 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: flight-deck
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://git-source.argocd.svc:8080/repo.git
+    targetRevision: main
+    path: plain
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starfleet
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: hangar-cam
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://git-source.argocd.svc:8080/repo.git
+    targetRevision: main
+    path: workloads/beta
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starfleet
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mission-log
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://git-source.argocd.svc:8080/repo.git
+    targetRevision: main
+    path: workloads/gamma
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starfleet
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

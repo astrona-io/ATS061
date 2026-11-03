@@ -5,15 +5,4 @@ exam_objectives:
 ---
 # Prerequisites
 
-Use astrona, kubectl, kind, Python 3, Podman, curl, Helm and a shell. Node inspection exercises use the containers in this environment, not the physical host.
-
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
-
-```sh
-export KUBECONFIG="$(astrona kubeconfig ats-061-lab-030-01-01)"
-test "$(kubectl config current-context)" = "kind-astro-ats-061-lab-030-01-01" || exit 1
-node_name="astro-ats-061-lab-030-01-01-control-plane"
-worker_name="astro-ats-061-lab-030-01-01-worker"
-```
-
-Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
+You need `astrona`, `kubectl`, `kind`, Podman and a shell. Know what a Kubernetes namespace is and how to apply a YAML file with `kubectl apply -f`. The lab creates its own cluster, so nothing on your machine changes besides that cluster.

@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: fleet-chart
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://git-source.argocd.svc:8080/repo.git
+    targetRevision: main
+    path: chart
+    helm:
+      valueFiles:
+      - values-prod.yaml
+      valuesObject:
+        image:
+          tag: 3.12-alpine
+      parameters:
+      - name: replicas
+        value: "4"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starfleet
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

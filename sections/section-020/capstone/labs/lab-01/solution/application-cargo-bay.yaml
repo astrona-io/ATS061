@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cargo-bay
+  namespace: argocd
+spec:
+  project: freeze
+  source:
+    repoURL: http://git-source.argocd.svc:8080/repo.git
+    targetRevision: main
+    path: workloads/beta
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starfleet
+  syncPolicy:
+    automated:
+      prune: true
+    syncOptions:
+    - CreateNamespace=true
+    retry:
+      limit: 2
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 1m

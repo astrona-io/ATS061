@@ -1,0 +1,48 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-lab-020-02-01
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: application-spec
+    description: "Application ordered has the required source, policy and options"
+    type: file
+    source: validation/validate-application-spec.sh
+    hint: "Set path waves, automated prune and the options CreateNamespace=true and PruneLast=true on the Application ordered."
+  - name: synced-and-healthy
+    description: "Application ordered is Synced and Healthy"
+    type: file
+    source: validation/validate-synced-and-healthy.sh
+    hint: "Wait for the automated sync to finish and read status.sync.status and status.health.status."
+  - name: ordered-objects-exist
+    description: "ConfigMap, Deployment and Service of wave-app exist"
+    type: file
+    source: validation/validate-ordered-objects-exist.sh
+    hint: "Check that the sync applied every wave of the path waves."
+  - name: hooks-ran-and-cleaned
+    description: "Both hooks ran and their Jobs were deleted"
+    type: file
+    source: validation/validate-hooks-ran-and-cleaned.sh
+    hint: "Read status.operationState.syncResult.resources for PreSync and PostSync entries and check that no hook Job is left."
+teardown:
+  keepCluster: false

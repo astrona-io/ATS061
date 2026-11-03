@@ -5,20 +5,25 @@ exam_objectives:
 ---
 # Helm And Kustomize As Argo CD Rendering Inputs
 
-This module develops helm And Kustomize As Argo CD Rendering Inputs. Use the explanations to connect intended behavior with responsible components and observable evidence.
+Most teams do not keep plain Kubernetes manifests in Git. They keep a Helm chart or a Kustomize directory and let a tool turn it into manifests. Argo CD supports both. This module explains who runs the tool, what the tool receives, what Argo CD does with the result and how to prove that the cluster matches the rendered output.
 
-## Learning Goals
+## Learning goals
 
-- Explain Helm template rendering versus Helm release lifecycle.
-- Interpret chart values, release-name and namespace interactions.
-- Explain Kustomize bases, overlays and transformations.
-- Evaluate deterministic output and secret exposure in generation.
+- Explain that Argo CD renders a Helm chart with `helm template` and does not install a Helm release.
+- Say which Argo CD component runs the rendering tool and which component compares the result with the cluster.
+- Predict which tool Argo CD selects for a path, and name the files that decide it.
+- Write an Application that points at a Helm chart and one that points at a Kustomize overlay.
+- Read `status.sourceType`, `status.sync.revision` and `status.summary.images` to see what Argo CD rendered.
+- Explain why a rendered resource keeps its own namespace and why a name prefix changes the name of every object.
 
-## Before You Start
+## What to know first
 
-Examples illustrate declared relationships and reasoning. No execution environment is required or claimed.
+You need to know what an Application is, what the desired state in Git means and how a sync applies it. The playground has Argo CD and a Git server inside the cluster. The seed repository holds a Helm chart in `chart`, a Kustomize base in `kustomize/base` with the overlays `kustomize/overlays/dev` and `kustomize/overlays/prod`, and plain manifests in `plain` and `workloads`.
 
-## Reading Order
+## Reading order
 
-1. Helm And Kustomize As Argo CD Rendering Inputs
-2. Summary
+The first part explains the rendering mechanism and covers Helm charts, and a graded lab follows it. The second part covers Kustomize bases and overlays, and a second graded lab follows it. The third part walks through both tools in the playground. The summary closes the module.
+
+Launch the playground and keep it open while you read:
+
+<!-- astrona:playground -->

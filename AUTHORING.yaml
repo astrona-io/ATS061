@@ -1,5 +1,6 @@
 version: 1
-approval: CAPA requested 2026-10-11; established reading-only scope
+approval: Maintainer requested PCA, CCA and CAPA playgrounds and graded labs on 2026-10-13,
+  superseding the earlier reading-only scope.
 course:
   id: ATS061
   certification:
@@ -15,7 +16,7 @@ course:
     - Configure Argo CD with Helm and Kustomize
     - Identify Common Reconciliation Patterns
 defaults:
-  playground: false
+  playground: true
   module_lab: false
   capstone: false
   section_quiz: false
@@ -37,11 +38,22 @@ sections:
     - Identify controller, repository and access dependencies.
     outline:
     - Argo CD Desired State And Reconciliation
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     sources:
     - reading: sections/section-010/module-01/course-01-argo-cd-desired-state-and-reconciliation.md
       adapted_from: null
+    - reading: sections/section-010/module-01/course-02-guided-practice.md
+      adapted_from: null
+    labs:
+    - id: lab-01
+      path: sections/section-010/module-01/labs/lab-01
+      after_reading: sections/section-010/module-01/course-01-argo-cd-desired-state-and-reconciliation.md
+      objective: Reconcile the declared application from the internal Git source.
+      status: draft
+      runtime_verification: pending
+    practice_readings:
+    - sections/section-010/module-01/course-02-guided-practice.md
 - id: section-020
   title: Synchronize Applications Using Argo CD
   curriculum_item: Synchronize Applications Using Argo CD
@@ -57,11 +69,22 @@ sections:
     - Evaluate rollback against the declared source of truth.
     outline:
     - Manual And Automated Sync, Pruning And Self-Healing
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     sources:
     - reading: sections/section-020/module-01/course-01-manual-and-automated-sync-pruning-and-self-healing.md
       adapted_from: null
+    - reading: sections/section-020/module-01/course-02-guided-practice.md
+      adapted_from: null
+    labs:
+    - id: lab-01
+      path: sections/section-020/module-01/labs/lab-01
+      after_reading: sections/section-020/module-01/course-01-manual-and-automated-sync-pruning-and-self-healing.md
+      objective: Reconcile the declared application from the internal Git source.
+      status: draft
+      runtime_verification: pending
+    practice_readings:
+    - sections/section-020/module-01/course-02-guided-practice.md
 - id: section-030
   title: Use Argo CD Application
   curriculum_item: Use Argo CD Application
@@ -77,11 +100,22 @@ sections:
     - Evaluate tracking, status and deletion lifecycle.
     outline:
     - Application Source, Destination And Project Boundaries
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     sources:
     - reading: sections/section-030/module-01/course-01-application-source-destination-and-project-boundaries.md
       adapted_from: null
+    - reading: sections/section-030/module-01/course-02-guided-practice.md
+      adapted_from: null
+    labs:
+    - id: lab-01
+      path: sections/section-030/module-01/labs/lab-01
+      after_reading: sections/section-030/module-01/course-01-application-source-destination-and-project-boundaries.md
+      objective: Reconcile the declared application from the internal Git source.
+      status: draft
+      runtime_verification: pending
+    practice_readings:
+    - sections/section-030/module-01/course-02-guided-practice.md
 - id: section-040
   title: Configure Argo CD with Helm and Kustomize
   curriculum_item: Configure Argo CD with Helm and Kustomize
@@ -97,11 +131,28 @@ sections:
     - Evaluate deterministic output and secret exposure in generation.
     outline:
     - Helm And Kustomize As Argo CD Rendering Inputs
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     sources:
     - reading: sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
       adapted_from: null
+    - reading: sections/section-040/module-01/course-02-guided-practice.md
+      adapted_from: null
+    labs:
+    - id: lab-01
+      path: sections/section-040/module-01/labs/lab-01
+      after_reading: sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
+      objective: Reconcile the declared application from the internal Git source.
+      status: draft
+      runtime_verification: pending
+    - id: lab-02
+      path: sections/section-040/module-01/labs/lab-02
+      after_reading: sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
+      objective: Reconcile the declared application from the internal Git source.
+      status: draft
+      runtime_verification: pending
+    practice_readings:
+    - sections/section-040/module-01/course-02-guided-practice.md
 - id: section-050
   title: Identify Common Reconciliation Patterns
   curriculum_item: Identify Common Reconciliation Patterns
@@ -117,8 +168,19 @@ sections:
     - Compare bootstrap composition with ApplicationSet-generated Applications.
     outline:
     - Drift, Refresh, Ignore Rules And Reconciliation Patterns
-    playground: false
-    module_lab: false
+    playground: true
+    module_lab: true
     sources:
     - reading: sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
       adapted_from: null
+    - reading: sections/section-050/module-01/course-02-guided-practice.md
+      adapted_from: null
+    labs:
+    - id: lab-01
+      path: sections/section-050/module-01/labs/lab-01
+      after_reading: sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
+      objective: Reconcile the declared application from the internal Git source.
+      status: draft
+      runtime_verification: pending
+    practice_readings:
+    - sections/section-050/module-01/course-02-guided-practice.md

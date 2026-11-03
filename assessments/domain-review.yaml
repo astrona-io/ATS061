@@ -11,7 +11,7 @@ scope:
   title: ARGO CD
 placement:
   position: after
-  reading: sections/section-050/module-01/course-02-summary.md
+  reading: sections/section-050/module-01/course-03-summary.md
 questions:
 - id: ats061-domain-review-q01
   type: single_choice

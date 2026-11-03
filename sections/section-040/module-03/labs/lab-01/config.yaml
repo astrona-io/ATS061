@@ -1,0 +1,48 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-lab-040-03-01
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: dev-spec
+    description: "Application dev-fleet builds the dev overlay with an image override and an annotation"
+    type: file
+    source: validation/validate-dev-spec.sh
+    hint: "Use path kustomize/overlays/dev, kustomize.images docker.io/library/python:3.12-alpine and commonAnnotations with the owner annotation."
+  - name: prod-spec
+    description: "Application prod-fleet builds the prod overlay with an inline patch"
+    type: file
+    source: validation/validate-prod-spec.sh
+    hint: "Use path kustomize/overlays/prod and one entry under kustomize.patches that sets requests.cpu 25m on git-probe."
+  - name: dev-live
+    description: "dev-fleet is Synced and Healthy and the live dev objects carry the overrides"
+    type: file
+    source: validation/validate-dev-live.sh
+    hint: "The Deployment dev-git-probe has 1 replica, the tag 3.12-alpine and the owner annotation."
+  - name: prod-live
+    description: "prod-fleet is Synced and Healthy and the live Deployment has the patched resource request"
+    type: file
+    source: validation/validate-prod-live.sh
+    hint: "The Deployment prod-git-probe has 3 replicas, the tag 3.12-alpine and requests.cpu 25m."
+teardown:
+  keepCluster: false

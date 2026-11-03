@@ -1,0 +1,53 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-lab-050-03-01
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: applicationset-spec
+    description: "ApplicationSet fleet-envs reads envs/*/config.json with a Git files generator"
+    type: file
+    source: validation/validate-applicationset-spec.sh
+    hint: "Use one git generator with files path envs/*/config.json on revision main and a template that builds the Application from the parameters."
+  - name: applications-generated
+    description: "The three generated Applications are owned by the ApplicationSet and Synced and Healthy"
+    type: file
+    source: validation/validate-applications-generated.sh
+    hint: "Let the ApplicationSet create probe-dev, probe-staging and probe-prod. Wait for each to become Synced and Healthy."
+  - name: environment-replicas
+    description: "Each environment has its own namespace and the replica count of its file"
+    type: file
+    source: validation/validate-environment-replicas.sh
+    hint: "Set kustomize.namespace and the kustomize.replicas count in the template from the parameters environment and replicas."
+  - name: generated-edit-reverted
+    description: "An edit of a generated Application is reverted by the ApplicationSet controller"
+    type: file
+    source: validation/validate-generated-edit-reverted.sh
+    hint: "Keep the Applications owned by the ApplicationSet and do not set an ignore rule for them. The controller patches them back to the template."
+  - name: generated-recreated
+    description: "A deleted generated Application is created again"
+    type: file
+    source: validation/validate-generated-recreated.sh
+    hint: "Do not use a create-only policy. The ApplicationSet controller creates the Application again while its file exists."
+teardown:
+  keepCluster: false

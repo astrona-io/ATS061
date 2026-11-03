@@ -1,0 +1,48 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-capstone-020
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: main-deck-ordered
+    description: "main-deck is synced with options, hooks and no leftover hook Jobs"
+    type: file
+    source: validation/validate-main-deck-ordered.sh
+    hint: "Use automated prune and selfHeal, CreateNamespace=true and PruneLast=true. Wait for Synced and Healthy and read the PreSync and PostSync entries of the sync result."
+  - name: main-deck-self-heal
+    description: "main-deck repairs a manual change of wave-app"
+    type: file
+    source: validation/validate-main-deck-self-heal.sh
+    hint: "Set selfHeal: true in the automated policy. The check scales wave-app to 3 and waits for Argo CD to set it back to 1."
+  - name: cargo-bay-frozen
+    description: "The deny window blocks cargo-bay"
+    type: file
+    source: validation/validate-cargo-bay-frozen.sh
+    hint: "Create the project freeze with one always-active deny window and manualSync true before the Application cargo-bay, then check there is no operation."
+  - name: fleet-release-rolled-back
+    description: "fleet-release was rolled back to its first revision"
+    type: file
+    source: validation/validate-fleet-release-rolled-back.sh
+    hint: "Sync main, sync release with --revision, then roll back to the first history id. Automated sync must be off."
+teardown:
+  keepCluster: false

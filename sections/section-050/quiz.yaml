@@ -1,0 +1,335 @@
+# Knowledge check for section 050. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats061-050
+course_id: ATS061
+exam_code: CAPA
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-050
+  title: Identify Common Reconciliation Patterns
+questions:
+- id: ats061-050-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Distinguish a refresh from a sync
+  source_readings:
+  - sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
+  prompt: An operator runs a hard refresh on an Application that shows `OutOfSync`.
+    What changes in the cluster?
+  options:
+  - id: a
+    text: Argo CD applies the Git state and the Application becomes `Synced`.
+    explanation: Applying the Git state is a sync, not a refresh.
+  - id: b
+    text: Argo CD deletes the objects that are not in Git.
+    explanation: Deleting objects is pruning, which only a sync does.
+  - id: c
+    text: Nothing changes in the cluster. Argo CD discards its cached manifests, builds
+      the target state again and updates the comparison.
+    explanation: Correct. A refresh only compares and updates `status`. A hard refresh
+      also drops the cached manifests.
+  - id: d
+    text: Argo CD restarts the application controller.
+    explanation: A refresh does not restart any component.
+  correct_option: c
+  explanation: A refresh builds the target state, reads the live state and updates
+    the comparison. Only a sync changes objects in the cluster.
+- id: ats061-050-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Recognise live drift and the setting that repairs it
+  source_readings:
+  - sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
+  prompt: 'Someone runs `kubectl scale` on a Deployment of an Application with automated
+    sync and `selfHeal: true`, and the Git commit did not change. What does the Application
+    show a few seconds later?'
+  options:
+  - id: a
+    text: The replica count is set back to the Git value, and the Application returns
+      to `Synced`.
+    explanation: Correct. The change is live drift, and self-heal starts a sync that
+      sets the field back to the target state.
+  - id: b
+    text: The replica count stays and the Application is `Synced`.
+    explanation: The Application is `Synced` only when the field is ignored, which
+      this Application does not do.
+  - id: c
+    text: The Application is `Unknown` until someone approves a sync.
+    explanation: Automated sync with self-heal needs no approval.
+  - id: d
+    text: The sync fails because the live object changed.
+    explanation: A changed live object does not make a sync fail.
+  correct_option: a
+  explanation: The target state did not change, but the live state did. Self-heal
+    turns that difference into a sync.
+- id: ats061-050-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain why a sync repairs a field that an ignore rule covers
+  source_readings:
+  - sections/section-050/module-01/course-04-ignore-differences-and-controller-owned-fields.md
+  prompt: An Application ignores `/spec/replicas` of Deployments but does not set
+    `RespectIgnoreDifferences=true`. An autoscaler sets 6 replicas, and later someone
+    changes the image by hand. The self-heal sync repairs the image. What happens
+    to the replica count?
+  options:
+  - id: a
+    text: It stays at 6, because the ignore rule always protects the field.
+    explanation: Without the sync option the rule only affects the comparison.
+  - id: b
+    text: It stays at 6 until the next hard refresh.
+    explanation: A hard refresh does not change objects.
+  - id: c
+    text: The sync fails because it touches an ignored field.
+    explanation: An ignored field does not make a sync fail.
+  - id: d
+    text: It is set back to the Git value, because the rule hides the difference but
+      the sync applies the whole manifest.
+    explanation: Correct. The sync option `RespectIgnoreDifferences=true` makes the
+      sync leave the ignored field as it is.
+  correct_option: d
+  explanation: An ignore rule is a comparison rule. The sync option extends it to
+    the sync.
+- id: ats061-050-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Choose the narrowest ignore rule for an autoscaled field
+  source_readings:
+  - sections/section-050/module-01/course-04-ignore-differences-and-controller-owned-fields.md
+  prompt: A HorizontalPodAutoscaler changes the replica count of the Deployments of
+    one Application. Which rule is the best fit?
+  options:
+  - id: a
+    text: A rule in `argocd-cm` that ignores `/spec` for all Deployments of all Applications.
+    explanation: This is far too broad and hides real changes.
+  - id: b
+    text: An `ignoreDifferences` entry in that Application for group `apps`, kind
+      `Deployment` and the pointer `/spec/replicas`.
+    explanation: Correct. It names one field of one kind in one Application.
+  - id: c
+    text: Turning off automated sync for the Application.
+    explanation: This stops all repairs instead of ignoring one field.
+  - id: d
+    text: 'Setting `selfHeal: false` on the Application.'
+    explanation: This stops the repair of every field, and the Application still shows `OutOfSync` for the replica count.
+  correct_option: b
+  explanation: 'Keep an exception narrow: one kind, one field, one Application.'
+- id: ats061-050-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain why an ignore rule has no effect on an object that does
+    not exist yet
+  source_readings:
+  - sections/section-050/module-01/course-04-ignore-differences-and-controller-owned-fields.md
+  - sections/section-050/module-01/course-02-guided-practice.md
+  prompt: A new Application uses `ignoreDifferences` for `/spec/replicas` and `RespectIgnoreDifferences=true`.
+    Git holds 2 replicas. How many replicas does the first sync create?
+  options:
+  - id: a
+    text: None, because the sync waits for the autoscaler.
+    explanation: The sync does not wait for any autoscaler.
+  - id: b
+    text: 2, because the object does not exist yet, so there is no live value to keep.
+    explanation: Correct. The option keeps the live value of an existing object. A
+      missing object is created from Git.
+  - id: c
+    text: 1, which is the Kubernetes default.
+    explanation: The manifest in Git sets the value.
+  - id: d
+    text: The first sync fails with a validation error.
+    explanation: The rule is valid and does not make the first sync fail.
+  correct_option: b
+  explanation: The rule can only keep a live value that exists.
+- id: ats061-050-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Identify the destination namespace of an app-of-apps parent
+  source_readings:
+  - sections/section-050/module-02/course-01-app-of-apps-bootstrap.md
+  prompt: A parent Application reads a path that holds child Application manifests.
+    Which destination namespace must the parent use?
+  options:
+  - id: a
+    text: "`starfleet`, the namespace of the workloads."
+    explanation: The children are Application objects, not workloads.
+  - id: b
+    text: "`default`, because the project is `default`."
+    explanation: The project name is not a namespace.
+  - id: c
+    text: "`kube-system`, because Argo CD runs as a system component."
+    explanation: Argo CD does not run there.
+  - id: d
+    text: "`argocd`, because Application objects live in the Argo CD namespace."
+    explanation: Correct. The parent creates Application objects, so it deploys to
+      the namespace where Argo CD reads them.
+  correct_option: d
+  explanation: The workloads go into the namespaces named by the children. The parent
+    only creates the children.
+- id: ats061-050-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Predict what a parent does when a child is edited by hand
+  source_readings:
+  - sections/section-050/module-02/course-02-children-ownership-and-failures.md
+  prompt: 'A parent has automated sync with `selfHeal: true`. Someone changes `spec.source.targetRevision`
+    of a live child to `v1.0.0`. What happens?'
+  options:
+  - id: a
+    text: The parent changes the child back to the value in Git, because the child
+      is an object the parent tracks.
+    explanation: Correct. The edit is live drift on an object of the parent, so the
+      parent syncs it back.
+  - id: b
+    text: The child deploys the tag `v1.0.0` and the edit stays.
+    explanation: This happens only if the parent does not repair its children.
+  - id: c
+    text: The parent is deleted.
+    explanation: An edit of a child never deletes the parent.
+  - id: d
+    text: The child is deleted and not created again.
+    explanation: An edit does not delete the child.
+  correct_option: a
+  explanation: A parent treats its children as ordinary tracked objects, so it repairs
+    drift on them.
+- id: ats061-050-q08
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Explain what deleting a child Application does to its workload
+  source_readings:
+  - sections/section-050/module-02/course-01-app-of-apps-bootstrap.md
+  - sections/section-050/module-02/course-02-children-ownership-and-failures.md
+  prompt: A child Application has the finalizer `resources-finalizer.argocd.argoproj.io`.
+    Someone deletes it, and the parent has automated sync. What happens to the workload
+    of the child?
+  options:
+  - id: a
+    text: The workload stays, because the parent keeps it.
+    explanation: The parent does not own the workload.
+  - id: b
+    text: The workload is removed because the finalizer deletes the resources of the
+      child, and the parent then creates the child and the workload again.
+    explanation: Correct. The finalizer starts a cascade delete. The parent creates
+      the Application again from Git.
+  - id: c
+    text: The workload is removed and never created again.
+    explanation: The parent creates the child again and the child syncs the workload.
+  - id: d
+    text: The deletion is refused until the workload is deleted by hand.
+    explanation: Kubernetes does not refuse this deletion. The finalizer deletes the
+      resources.
+  correct_option: b
+  explanation: The finalizer decides what happens to the workload. The parent decides
+    that the child returns.
+- id: ats061-050-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Choose the generator for one Application for each data file
+    in Git
+  source_readings:
+  - sections/section-050/module-03/course-01-applicationset-generators-and-templates.md
+  prompt: A team wants one Application for each `envs/*/config.json` file and a new
+    Application when a file is added. Which generator fits?
+  options:
+  - id: a
+    text: A list generator with the environments written into the ApplicationSet.
+    explanation: The list is fixed in the ApplicationSet. A new file does not add
+      an element.
+  - id: b
+    text: A cluster generator.
+    explanation: It creates one Application for each registered cluster, not for each
+      file.
+  - id: c
+    text: A Git generator in directories mode with the path `envs/*`.
+    explanation: Directories mode makes one set of parameters per directory, with
+      the directory path. It does not read the fields of the file.
+  - id: d
+    text: A Git generator in files mode with the path `envs/*/config.json`.
+    explanation: Correct. Each matching file gives one parameter set from its fields.
+  correct_option: d
+  explanation: Files mode reads the fields of each file as parameters.
+- id: ats061-050-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Diagnose duplicate Application names from one template
+  source_readings:
+  - sections/section-050/module-03/course-01-applicationset-generators-and-templates.md
+  - sections/section-050/module-03/course-02-generate-applications-in-the-playground.md
+  prompt: An ApplicationSet template names its Applications `probe`, and three files
+    match the generator. What results?
+  options:
+  - id: a
+    text: Three Applications named `probe-1`, `probe-2` and `probe-3`.
+    explanation: Argo CD does not number names.
+  - id: b
+    text: Three Applications named after the files.
+    explanation: The template name is used. It does not change by itself.
+  - id: c
+    text: One Application, because the three parameter sets render the same name and
+      only one can exist.
+    explanation: Correct. The name must contain a parameter that differs for each
+      set.
+  - id: d
+    text: The ApplicationSet is rejected when it is created.
+    explanation: The ApplicationSet is valid. The problem appears when it is rendered.
+  correct_option: c
+  explanation: Each Application needs a unique name, so the template name must use
+    a parameter.
+- id: ats061-050-q11
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Predict what the ApplicationSet controller does to a manual
+    edit of a generated Application
+  source_readings:
+  - sections/section-050/module-03/course-01-applicationset-generators-and-templates.md
+  - sections/section-050/module-03/course-02-generate-applications-in-the-playground.md
+  prompt: Someone edits the `targetRevision` of a generated Application. The ApplicationSet
+    uses the default policy. What happens?
+  options:
+  - id: a
+    text: The controller sets the field back to the value of the template at its next
+      reconcile.
+    explanation: Correct. The template is the source for the generated Application,
+      and the default policy updates and deletes it.
+  - id: b
+    text: The edit stays, because the Application controller owns the object.
+    explanation: The ApplicationSet controller owns the object through an owner reference.
+  - id: c
+    text: The ApplicationSet is deleted.
+    explanation: An edit of a generated Application does not delete the ApplicationSet.
+  - id: d
+    text: The Application is deleted until the file changes.
+    explanation: An edit does not delete the Application.
+  correct_option: a
+  explanation: The generated Application is an output of the template. The controller
+    repairs it.
+- id: ats061-050-q12
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Choose a pattern by the ownership of the list of Applications
+  source_readings:
+  - sections/section-050/module-02/course-01-app-of-apps-bootstrap.md
+  - sections/section-050/module-03/course-01-applicationset-generators-and-templates.md
+  prompt: A team stores ten different Application manifests in Git, each with its
+    own source, and wants to edit them as files. Which pattern fits best?
+  options:
+  - id: a
+    text: An ApplicationSet with a list generator that holds all ten sources.
+    explanation: This hides the Applications in one template and loses their individual
+      manifests.
+  - id: b
+    text: An app-of-apps parent that reads the path with the ten manifests.
+    explanation: Correct. The parent applies each manifest as written, which suits
+      Applications that differ.
+  - id: c
+    text: One Application with ten sources.
+    explanation: One Application cannot give ten separate sync states.
+  - id: d
+    text: Ten Applications created by hand with `kubectl`.
+    explanation: This leaves the Applications outside Git.
+  correct_option: b
+  explanation: An app-of-apps parent suits different manifests. An ApplicationSet
+    suits one shape with different values.

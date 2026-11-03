@@ -5,6 +5,4 @@ exam_objectives:
 ---
 # Starting Environment
 
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
-
-Reconcile the declared application from the internal Git source.
+Argo CD is installed in the `argocd` namespace and a disposable Git server holds a Helm chart. No Application exists. The task is to make Argo CD render the chart with the production values file.

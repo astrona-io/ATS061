@@ -5,6 +5,4 @@ exam_objectives:
 ---
 # Starting Environment
 
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
-
-Reconcile the declared application from the internal Git source.
+Argo CD is installed in the `argocd` namespace and a Git server inside the cluster serves the path `plain`. No Application exists, so nothing manages the `git-probe` workload.

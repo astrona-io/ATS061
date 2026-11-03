@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: fleet-envs
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - git:
+      repoURL: http://git-source.argocd.svc:8080/repo.git
+      revision: main
+      files:
+      - path: 'envs/*/config.json'
+  template:
+    metadata:
+      name: 'probe-{{ .environment }}'
+    spec:
+      project: default
+      source:
+        repoURL: http://git-source.argocd.svc:8080/repo.git
+        targetRevision: main
+        path: kustomize/base
+        kustomize:
+          namespace: 'probe-{{ .environment }}'
+          replicas:
+          - name: git-probe
+            count: '{{ .replicas }}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: 'probe-{{ .environment }}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+        - CreateNamespace=true

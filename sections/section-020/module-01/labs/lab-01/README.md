@@ -1,10 +1,5 @@
----
-draft: true
-exam_objectives:
-- Synchronize Applications Using Argo CD
----
 # Repair Live Drift With Self Healing
 
-Reconcile the declared application from the internal Git source.
+Create an Application with automated prune and self-heal and prove that it restores a scaled-down Deployment.
 
-The task and solution use a separate pinned kind cluster. Run `testing/smoke.sh` with its private kubeconfig to verify initial rejection and reference success. Static validation is not live evidence. Runtime verification remains pending.
+UNTESTED. This lab was validated statically with `astrona validate -c` and `bash -n` only. It was never booted. Run `astrona test` before you rely on it. The grader `validate.sh` runs `testing/check.py`, which checks the Application fields and the live workload.

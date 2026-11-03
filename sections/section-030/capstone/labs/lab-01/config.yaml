@@ -1,0 +1,53 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-capstone-030
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: bridge-project
+    description: "AppProject bridge allows one repository, one destination and only Deployment and Service"
+    type: file
+    source: validation/validate-bridge-project.sh
+    hint: "Set sourceRepos to the one Git URL, destinations to the one server and starfleet, and namespaceResourceWhitelist to apps/Deployment and the empty group Service."
+  - name: probe-chart-live
+    description: "probe-chart renders the chart with the production values and the image parameter"
+    type: file
+    source: validation/validate-probe-chart-live.sh
+    hint: "Use project bridge, path chart, valueFiles values-prod.yaml, parameter image.tag 3.12-alpine, automated selfHeal and the cascading finalizer."
+  - name: replicas-ignored
+    description: "A manual replica change on git-probe is not drift"
+    type: file
+    source: validation/validate-replicas-ignored.sh
+    hint: "Add ignoreDifferences for group apps, kind Deployment and the pointer /spec/replicas to probe-chart."
+  - name: fleet-children
+    description: "fleet is an automated app of apps and its children are Synced and Healthy"
+    type: file
+    source: validation/validate-fleet-children.sh
+    hint: "Create fleet with path apps, destination namespace argocd, automated prune and selfHeal and the finalizer. Do not apply the child manifests yourself."
+  - name: tracking-ids
+    description: "The tracking annotations name probe-chart and fleet as owners"
+    type: file
+    source: validation/validate-tracking-ids.sh
+    hint: "Create the objects through the Applications. Argo CD writes argocd.argoproj.io/tracking-id on its own."
+teardown:
+  keepCluster: false

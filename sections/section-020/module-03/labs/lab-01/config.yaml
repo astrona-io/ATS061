@@ -1,0 +1,48 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-lab-020-03-01
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: maintenance-window
+    description: "Project maintenance has the always-active deny window"
+    type: file
+    source: validation/validate-maintenance-window.sh
+    hint: "Add one deny window with schedule '* * * * *', duration 24h, applications '*' and manualSync true to the AppProject maintenance."
+  - name: frozen-spec
+    description: "Application frozen has the required source, policy and retry"
+    type: file
+    source: validation/validate-frozen-spec.sh
+    hint: "Use project maintenance, path workloads/alpha, automated prune and retry limit 3 with backoff 10s, factor 2, maxDuration 2m."
+  - name: frozen-blocked
+    description: "The deny window blocked the automated sync of frozen"
+    type: file
+    source: validation/validate-frozen-blocked.sh
+    hint: "Create the project before the Application, then check that frozen is OutOfSync, has no operation and has no Deployment alpha."
+  - name: rolled-back
+    description: "release-train was synced twice and rolled back to the first revision"
+    type: file
+    source: validation/validate-rolled-back.sh
+    hint: "Sync main, sync release with --revision, then roll back to the first history id. Automated sync must be off."
+teardown:
+  keepCluster: false

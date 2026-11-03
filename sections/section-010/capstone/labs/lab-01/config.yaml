@@ -1,0 +1,48 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-capstone-010
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: flight-deck
+    description: The Application flight-deck compares the plain directory, is Synced and Healthy, and git-probe runs 2 replicas.
+    type: file
+    source: validation/validate-flight-deck.sh
+    hint: A ComparisonError comes from the repository server. Check the source path of flight-deck against the directories in the repository.
+  - name: hangar-cam
+    description: The Application hangar-cam delivers workloads/beta and the broken Deployment is pruned.
+    type: file
+    source: validation/validate-hangar-cam.sh
+    hint: Compare the sync status with the health status. A live resource that is not in the source needs pruning.
+  - name: mission-log
+    description: A new Application mission-log delivers workloads/gamma with automated pruning and self-healing.
+    type: file
+    source: validation/validate-mission-log.sh
+    hint: Create an Application in the argocd namespace for the directory workloads/gamma of the branch main with the default project and the starfleet namespace.
+  - name: status-report
+    description: The ConfigMap status-report records the repository server pod, the controller kind and the flight-deck revision.
+    type: file
+    source: validation/validate-status-report.sh
+    hint: Read the values from the cluster. The application controller runs as a StatefulSet. The revision is in the Application status.
+teardown:
+  keepCluster: false

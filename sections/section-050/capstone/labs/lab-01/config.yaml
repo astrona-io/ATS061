@@ -1,0 +1,58 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-capstone-050
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: ops-bridge-spec
+    description: "Application ops-bridge ignores only the replica count and respects it during sync"
+    type: file
+    source: validation/validate-ops-bridge-spec.sh
+    hint: "Use exactly one ignoreDifferences entry for apps Deployment /spec/replicas, selfHeal and RespectIgnoreDifferences=true."
+  - name: ops-bridge-replicas-kept
+    description: "A replica count set by hand stays on ops-bridge and the Application stays Synced"
+    type: file
+    source: validation/validate-ops-bridge-replicas-kept.sh
+    hint: "The ignore rule and the sync option together keep the replica count. Wait for ops-bridge to be Synced and Healthy first."
+  - name: fleet-root-children
+    description: "fleet-root creates and owns alpha and beta and both are Synced and Healthy"
+    type: file
+    source: validation/validate-fleet-root-children.sh
+    hint: "Create fleet-root with source path apps and destination namespace argocd. Wait for the children to become Healthy."
+  - name: children-repaired
+    description: "An edited child is reverted and a deleted child returns without removing its workload"
+    type: file
+    source: validation/validate-children-repaired.sh
+    hint: "Keep automated prune and selfHeal on fleet-root. The parent reverts edits of its children and creates deleted ones again."
+  - name: fleet-envs-replicas
+    description: "fleet-envs generates three owned Applications with the replica counts of the data files"
+    type: file
+    source: validation/validate-fleet-envs-replicas.sh
+    hint: "Use a git files generator over envs/*/config.json and set kustomize.namespace and kustomize.replicas from the parameters."
+  - name: generated-edit-reverted
+    description: "An edit of a generated Application is reverted by the ApplicationSet controller"
+    type: file
+    source: validation/validate-generated-edit-reverted.sh
+    hint: "Keep the Applications owned by the ApplicationSet. The controller patches them back to the template."
+teardown:
+  keepCluster: false

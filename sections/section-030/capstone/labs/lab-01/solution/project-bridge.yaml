@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: bridge
+  namespace: argocd
+spec:
+  sourceRepos:
+  - http://git-source.argocd.svc:8080/repo.git
+  destinations:
+  - server: https://kubernetes.default.svc
+    namespace: starfleet
+  namespaceResourceWhitelist:
+  - group: apps
+    kind: Deployment
+  - group: ""
+    kind: Service

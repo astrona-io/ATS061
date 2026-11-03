@@ -3,9 +3,8 @@ metadata:
   name: ats-061-lab-010-01-01
   docs:
     prerequisites: docs/prerequisites.md
-    examQuestion: question.md
-    caseStudy: docs/case-study.md
-    guide: solution.md
+    question: question.md
+    solution: solution.md
 runtime:
   type: kind
   kind:
@@ -17,15 +16,33 @@ bootstrap:
   - name: seed-private-environment
     type: file
     source: bootstrap/setup.sh
-teardown:
-  keepCluster: false
+# Applied only by `astrona test`: the reference solution.
 testing:
   init:
-  - name: reference-result
+  - name: reference-solution
     type: file
     source: solution/apply.sh
 validation:
-  script:
-    name: verify-fields-and-live-evidence
+  scripts:
+  - name: application-source
+    description: The Application mission reads the plain directory of the main branch and targets the starfleet namespace.
     type: file
-    source: validate.sh
+    source: validation/validate-application-source.sh
+    hint: Check the project, the repository URL, targetRevision, path and destination namespace of the Application mission in the argocd namespace.
+  - name: synced-healthy-revision
+    description: The Application is Synced and Healthy and has resolved a commit.
+    type: file
+    source: validation/validate-synced-healthy-revision.sh
+    hint: Read status.sync.status, status.health.status and status.sync.revision of the Application.
+  - name: workload-tracked
+    description: The git-probe Deployment has 2 available replicas and Argo CD tracks it for mission.
+    type: file
+    source: validation/validate-workload-tracked.sh
+    hint: Argo CD must create git-probe in starfleet. Look at the tracking-id annotation on the Deployment.
+  - name: self-heal
+    description: A manual change to the live Deployment is reverted by Argo CD.
+    type: file
+    source: validation/validate-self-heal.sh
+    hint: Add automated sync with prune and selfHeal under spec.syncPolicy of the Application.
+teardown:
+  keepCluster: false

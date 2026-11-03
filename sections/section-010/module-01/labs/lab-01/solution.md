@@ -3,31 +3,30 @@ draft: true
 exam_objectives:
 - Understand Argo CD Fundamentals
 ---
-# Reconcile A Git Sourced Application Solution
+# Deliver A Git Sourced Application With Argo CD Solution
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+This walkthrough creates the Application, waits for the two statuses and proves that self-healing works.
+
+## Step 1: Connect to the lab
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-061-lab-010-01-01)"
-test "$(kubectl config current-context)" = "kind-astro-ats-061-lab-010-01-01" || exit 1
-node_name="astro-ats-061-lab-010-01-01-control-plane"
-worker_name="astro-ats-061-lab-010-01-01-worker"
+kubectl config current-context
 ```
 
-Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
+The context must be `kind-astro-ats-061-lab-010-01-01`.
 
-## Inspect And Explain
-
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
-
-Inspect the current objects before changing them:
+## Step 2: Inspect the starting state
 
 ```sh
-kubectl -n starfleet get pods -o wide
-kubectl get nodes -o wide
+kubectl -n argocd get pods
+kubectl -n argocd get applications
+kubectl -n starfleet get deployments
 ```
 
-Create an Application from the private Git source. Observe the resolved commit, sync result and workload health. The disposable repository is seeded by bootstrap; no external credentials are needed.
+The Argo CD pods run, no Application exists and `starfleet` has no `git-probe`.
+
+## Step 3: Create the Application
 
 Save this as `application-mission.yaml`:
 
@@ -52,26 +51,32 @@ spec:
       selfHeal: true
 ```
 
-Apply the scoped correction:
+Apply it:
 
 ```sh
 kubectl apply -f application-mission.yaml
 ```
 
-## Verify The Result
-
-Observe the actual result. A denied request returns a nonzero status when the denial works, so run it separately from a shell sequence that stops on error. Status convergence and a successful request establish different parts of the result.
+Then check the result:
 
 ```sh
 kubectl -n argocd wait --for=jsonpath='{.status.sync.status}'=Synced application/mission --timeout=240s
 kubectl -n argocd wait --for=jsonpath='{.status.health.status}'=Healthy application/mission --timeout=240s
+kubectl -n argocd get application mission -o jsonpath='{.status.sync.revision}{"\n"}'
+kubectl -n starfleet get deployment git-probe
 ```
 
-Reconcile the declared application from the internal Git source. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required denial or correction. No example command output is presented as evidence of a completed run. A matching field alone does not establish that a process used it or that a controller reconciled it.
+The repository server rendered the `plain` directory, the application controller applied it and the Deployment reports 2 ready replicas. Run `astrona submit` now to check the Application source, the two statuses, the tracked Deployment and the self-healing test.
 
-After recording your result, remove the independent lab with `astrona destroy ats-061-lab-010-01-01`.
+## Step 4: Prove self-healing
 
-## Common pitfalls
+The grader scales the Deployment to 4 replicas and expects Argo CD to put it back to 2. You can try the same change first:
 
-> [!WARNING]
-> Confirm the private context and exact node names before a change. Check the stated scope and live result. Do not change unrelated components to hide the original fault.
+```sh
+kubectl -n starfleet scale deployment git-probe --replicas=4
+kubectl -n starfleet wait --for=jsonpath='{.spec.replicas}'=2 deployment/git-probe --timeout=120s
+```
+
+The application controller sees the live change, marks the Application `OutOfSync` and, because `selfHeal` is `true`, syncs it again.
+
+After recording your result, remove the lab with `astrona destroy ats-061-lab-010-01-01`.

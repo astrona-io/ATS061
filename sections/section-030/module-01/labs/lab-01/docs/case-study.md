@@ -5,6 +5,4 @@ exam_objectives:
 ---
 # Starting Environment
 
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
-
-Reconcile the declared application from the internal Git source.
+The cluster runs Argo CD 3.5.4 in the `argocd` namespace and a Git server at `http://git-source.argocd.svc:8080/repo.git`. The namespaces `starfleet` and `outpost` exist. No Application and no project besides `default` exists.

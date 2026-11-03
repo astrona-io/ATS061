@@ -17,7 +17,7 @@
           "source": {
             "repoURL": "http://git-source.argocd.svc:8080/repo.git",
             "targetRevision": "main",
-            "path": "overlays"
+            "path": "kustomize/overlays/prod"
           },
           "destination": {
             "server": "https://kubernetes.default.svc",

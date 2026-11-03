@@ -5,27 +5,30 @@ exam_objectives:
 ---
 # Scope An Ignore Difference Exception
 
-Reconcile the declared application from the internal Git source.
+The `git-probe` service on Starfleet station `outpost` is resized by a scaling controller during busy periods. Operations also want Argo CD to repair any other manual change to the service, such as a changed image. Today every resize shows as drift, and Argo CD scales the service back.
 
 ## Starting state
 
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
+Argo CD is installed in the `argocd` namespace. The Git server at `http://git-source.argocd.svc:8080/repo.git` holds the path `plain` on the branch `main` with the Deployment and Service `git-probe` for the namespace `starfleet`. The Deployment declares two replicas. No Application exists.
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Connect to the lab cluster:
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-061-lab-050-01-01)"
-test "$(kubectl config current-context)" = "kind-astro-ats-061-lab-050-01-01" || exit 1
-node_name="astro-ats-061-lab-050-01-01-control-plane"
-worker_name="astro-ats-061-lab-050-01-01-worker"
+kubectl config current-context
 ```
 
-Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
+The context must be `kind-astro-ats-061-lab-050-01-01`.
 
 ## Required result
 
-Ignore only the escaped annotation path lab.example.io/review. Keep replica and image drift observable. Refresh comparison after adding the annotation; sync must remain healthy.
+- An Application `mission` in `argocd` uses the project `default`, the repository above, the revision `main` and the path `plain`, and deploys to the namespace `starfleet`.
+- The Application has automated sync with `prune: true` and `selfHeal: true`, and it is `Synced` and `Healthy`.
+- The Application has exactly one `ignoreDifferences` entry. It selects the group `apps` and the kind `Deployment` and ignores only the pointer `/spec/replicas`.
+- A replica count that someone sets by hand stays in place and the Application stays `Synced`.
+- A manual change of the container image is reverted by Argo CD, and the replica count that someone set by hand survives that repair.
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+- Do not ignore any other field and do not use a wildcard for the kind or the group.
+- Do not depend on manual edits of the Deployment to pass. The grader changes the replica count and the image itself to test the behaviour.

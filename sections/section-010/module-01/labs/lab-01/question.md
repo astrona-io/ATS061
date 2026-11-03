@@ -3,29 +3,34 @@ draft: true
 exam_objectives:
 - Understand Argo CD Fundamentals
 ---
-# Reconcile A Git Sourced Application
+# Deliver A Git Sourced Application With Argo CD
 
-Reconcile the declared application from the internal Git source.
+The Starfleet operations team wants the `git-probe` workload in the `starfleet` namespace delivered from Git instead of applied by hand. Create one Argo CD Application that reads the manifests, keeps the cluster equal to Git and reverts manual changes.
 
-## Starting state
-
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
-
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+## Connect to the lab
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-061-lab-010-01-01)"
-test "$(kubectl config current-context)" = "kind-astro-ats-061-lab-010-01-01" || exit 1
-node_name="astro-ats-061-lab-010-01-01-control-plane"
-worker_name="astro-ats-061-lab-010-01-01-worker"
+kubectl config current-context
 ```
 
-Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
+The context must be `kind-astro-ats-061-lab-010-01-01`.
+
+## Starting state
+
+- Argo CD is installed in the `argocd` namespace. Its API server, repository server, application controller and Redis run.
+- A disposable Git server inside the cluster serves one repository at `http://git-source.argocd.svc:8080/repo.git`. The branch `main` has a directory `plain` with a Deployment and a Service named `git-probe`. You cannot commit to this repository.
+- No Application exists and no `git-probe` Deployment exists in `starfleet`.
 
 ## Required result
 
-Create an Application from the private Git source. Observe the resolved commit, sync result and workload health. The disposable repository is seeded by bootstrap; no external credentials are needed.
+- An Application named `mission` in the `argocd` namespace, in the project `default`, reads the directory `plain` of the branch `main` and deploys to the namespace `starfleet` of the local cluster.
+- The Application has automated sync with pruning and self-healing.
+- The Application is `Synced` and `Healthy`, and `status.sync.revision` holds a commit hash.
+- The Deployment `git-probe` has 2 available replicas, and Argo CD tracks it for `mission`.
+- A manual change of the live replica count is reverted by Argo CD.
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+- Do not create the `git-probe` Deployment or Service yourself. Argo CD must create them.
+- Do not change or scale any Argo CD component.

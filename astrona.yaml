@@ -35,7 +35,7 @@ modules:
 - id: module-010
   title: Understand Argo CD Fundamentals
   description: Developed reading and reasoning for Understand Argo CD Fundamentals.
-  maturity: alpha
+  status: alpha
   content:
   - type: reading
     title: Understand Argo CD Fundamentals
@@ -47,34 +47,119 @@ modules:
     title: Argo CD Desired State And Reconciliation
     path: sections/section-010/module-01/course-01-argo-cd-desired-state-and-reconciliation.md
   - type: reading
-    title: Reconcile A Git Sourced Application — Task
+    title: Deliver A Git Sourced Application With Argo CD — Task
     path: sections/section-010/module-01/labs/lab-01/question.md
   - type: lab
-    title: Reconcile A Git Sourced Application
+    title: Deliver A Git Sourced Application With Argo CD
     path: sections/section-010/module-01/labs/lab-01
     difficulty: intermediate
     estimated_duration: 25m
     topic: argo-gitops
     task_kind: build
     learning_goals:
-    - Reconcile the declared application from the internal Git source.
+    - Create an Application from a Git source and prove it is synced, healthy and
+      self-healing.
     tags:
     - capa
     - argo-gitops
   - type: reading
-    title: Reconcile A Git Sourced Application — Solution
+    title: Deliver A Git Sourced Application With Argo CD — Solution
     path: sections/section-010/module-01/labs/lab-01/solution.md
   - type: reading
-    title: 'Guided Practice: Reconcile A Git Sourced Application'
+    title: Reconcile A Git Sourced Application In The Playground
     path: sections/section-010/module-01/course-02-guided-practice.md
   - type: reading
     title: Summary
     path: sections/section-010/module-01/course-03-summary.md
+  - type: reading
+    title: Argo CD Architecture And Components
+    path: sections/section-010/module-02/course.md
+  - type: reading
+    title: Argo CD Components And Their Roles
+    path: sections/section-010/module-02/course-01-components-and-their-roles.md
+  - type: reading
+    title: Repair An Application With A Comparison Error — Task
+    path: sections/section-010/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Repair An Application With A Comparison Error
+    path: sections/section-010/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 30m
+    topic: argo-gitops
+    task_kind: fix
+    learning_goals:
+    - Diagnose a ComparisonError and repair the source path and revision of an Application.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Repair An Application With A Comparison Error — Solution
+    path: sections/section-010/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Follow A Refresh And A Sync Through The Components
+    path: sections/section-010/module-02/course-02-refresh-and-sync-flow-and-reading-components.md
+  - type: reading
+    title: Summary
+    path: sections/section-010/module-02/course-03-summary.md
+  - type: reading
+    title: Core Concepts, Application Status And The CLI
+    path: sections/section-010/module-03/course.md
+  - type: reading
+    title: Applications, Projects And Status Fields
+    path: sections/section-010/module-03/course-01-applications-projects-and-status-fields.md
+  - type: reading
+    title: Correct An OutOfSync And Unhealthy Application — Task
+    path: sections/section-010/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Correct An OutOfSync And Unhealthy Application
+    path: sections/section-010/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 30m
+    topic: argo-gitops
+    task_kind: fix
+    learning_goals:
+    - Read sync and health status and correct an Application that delivers a broken
+      workload.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Correct An OutOfSync And Unhealthy Application — Solution
+    path: sections/section-010/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Read And Correct Application Status With kubectl And The argocd CLI
+    path: sections/section-010/module-03/course-02-reading-status-with-the-cli.md
+  - type: reading
+    title: Summary
+    path: sections/section-010/module-03/course-03-summary.md
+  - type: reading
+    title: Repair, Create And Report On Argo CD Applications — Task
+    path: sections/section-010/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Repair, Create And Report On Argo CD Applications
+    path: sections/section-010/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 45m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Repair two broken Applications, create a third and record a status report from
+      live Argo CD state.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Repair, Create And Report On Argo CD Applications — Solution
+    path: sections/section-010/capstone/labs/lab-01/solution.md
+  - type: quiz
+    title: 'Knowledge Check: Understand Argo CD Fundamentals'
+    path: sections/section-010/quiz.yaml
+    pass_score: 70
 - id: module-020
   title: Synchronize Applications Using Argo CD
-  description: Developed reading and reasoning for Synchronize Applications Using
-    Argo CD.
-  maturity: alpha
+  description: Manual and automated sync, pruning and self healing, sync phases, waves,
+    hooks and options, retries, sync windows, history and rollback.
+  status: alpha
   content:
   - type: reading
     title: Synchronize Applications Using Argo CD
@@ -83,8 +168,14 @@ modules:
     title: Manual And Automated Sync, Pruning And Self-Healing
     path: sections/section-020/module-01/course.md
   - type: reading
-    title: Manual And Automated Sync, Pruning And Self-Healing
+    title: Comparison, Manual Sync And Automated Sync
     path: sections/section-020/module-01/course-01-manual-and-automated-sync-pruning-and-self-healing.md
+  - type: reading
+    title: Pruning And Self-Healing
+    path: sections/section-020/module-01/course-04-pruning-and-self-healing.md
+  - type: reading
+    title: Repair Live Drift With Self Healing In The Playground
+    path: sections/section-020/module-01/course-02-guided-practice.md
   - type: reading
     title: Repair Live Drift With Self Healing — Task
     path: sections/section-020/module-01/labs/lab-01/question.md
@@ -96,7 +187,8 @@ modules:
     topic: argo-gitops
     task_kind: build
     learning_goals:
-    - Reconcile the declared application from the internal Git source.
+    - Enable automated sync with pruning and self healing and prove that Argo CD repairs
+      live drift.
     tags:
     - capa
     - argo-gitops
@@ -104,15 +196,105 @@ modules:
     title: Repair Live Drift With Self Healing — Solution
     path: sections/section-020/module-01/labs/lab-01/solution.md
   - type: reading
-    title: 'Guided Practice: Repair Live Drift With Self Healing'
-    path: sections/section-020/module-01/course-02-guided-practice.md
-  - type: reading
     title: Summary
     path: sections/section-020/module-01/course-03-summary.md
+  - type: reading
+    title: Sync Phases, Waves, Hooks And Options
+    path: sections/section-020/module-02/course.md
+  - type: reading
+    title: Sync Phases, Waves And Hooks
+    path: sections/section-020/module-02/course-01-sync-phases-waves-and-hooks.md
+  - type: reading
+    title: Sync Options
+    path: sections/section-020/module-02/course-02-sync-options.md
+  - type: reading
+    title: Sync An Ordered Application With Hooks And Options — Task
+    path: sections/section-020/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Sync An Ordered Application With Hooks And Options
+    path: sections/section-020/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Sync a path with waves and hooks using sync options and read the hook evidence
+      from the sync result.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Sync An Ordered Application With Hooks And Options — Solution
+    path: sections/section-020/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-020/module-02/course-03-summary.md
+  - type: reading
+    title: Sync Retries, Sync Windows, Rollback And History
+    path: sections/section-020/module-03/course.md
+  - type: reading
+    title: Sync Retries And Backoff
+    path: sections/section-020/module-03/course-01-sync-retries.md
+  - type: reading
+    title: Sync Windows
+    path: sections/section-020/module-03/course-02-sync-windows.md
+  - type: reading
+    title: Deployment History And Rollback
+    path: sections/section-020/module-03/course-04-history-and-rollback.md
+  - type: reading
+    title: Retry, Block And Roll Back A Sync In The Playground
+    path: sections/section-020/module-03/course-05-guided-practice.md
+  - type: reading
+    title: Freeze Automated Syncs And Roll Back A Release — Task
+    path: sections/section-020/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Freeze Automated Syncs And Roll Back A Release
+    path: sections/section-020/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 30m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Block automated sync with a deny window, set a retry policy and roll back a
+      release from the history.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Freeze Automated Syncs And Roll Back A Release — Solution
+    path: sections/section-020/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-020/module-03/course-03-summary.md
+  - type: reading
+    title: Run A Controlled Release Of The Fleet — Task
+    path: sections/section-020/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Run A Controlled Release Of The Fleet
+    path: sections/section-020/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 45m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Combine ordered syncs with self healing, a deny window with retries and a rollback
+      in one controlled release.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Run A Controlled Release Of The Fleet — Solution
+    path: sections/section-020/capstone/labs/lab-01/solution.md
+  - type: quiz
+    title: 'Knowledge Check: Synchronize Applications Using Argo CD'
+    path: sections/section-020/quiz.yaml
+    pass_score: 70
 - id: module-030
   title: Use Argo CD Application
-  description: Developed reading and reasoning for Use Argo CD Application.
-  maturity: alpha
+  description: Application source, destination and project boundaries, directory,
+    Helm and Kustomize sources with overrides, ignored differences, resource tracking,
+    finalizers, app of apps and Application health.
+  status: alpha
   content:
   - type: reading
     title: Use Argo CD Application
@@ -124,34 +306,139 @@ modules:
     title: Application Source, Destination And Project Boundaries
     path: sections/section-030/module-01/course-01-application-source-destination-and-project-boundaries.md
   - type: reading
-    title: Constrain Application Source And Destination — Task
+    title: AppProject Restrictions
+    path: sections/section-030/module-01/course-04-appproject-restrictions.md
+  - type: reading
+    title: Restrict An Application With An AppProject In The Playground
+    path: sections/section-030/module-01/course-02-guided-practice.md
+  - type: reading
+    title: Restrict An Application To One Repository, Namespace And Kinds — Task
     path: sections/section-030/module-01/labs/lab-01/question.md
   - type: lab
-    title: Constrain Application Source And Destination
+    title: Restrict An Application To One Repository, Namespace And Kinds
     path: sections/section-030/module-01/labs/lab-01
     difficulty: intermediate
     estimated_duration: 25m
     topic: argo-gitops
     task_kind: build
     learning_goals:
-    - Reconcile the declared application from the internal Git source.
+    - Restrict an Application with an AppProject and prove that the Application syncs
+      only what the project allows.
     tags:
     - capa
     - argo-gitops
   - type: reading
-    title: Constrain Application Source And Destination — Solution
+    title: Restrict An Application To One Repository, Namespace And Kinds — Solution
     path: sections/section-030/module-01/labs/lab-01/solution.md
-  - type: reading
-    title: 'Guided Practice: Constrain Application Source And Destination'
-    path: sections/section-030/module-01/course-02-guided-practice.md
   - type: reading
     title: Summary
     path: sections/section-030/module-01/course-03-summary.md
+  - type: reading
+    title: Directory, Helm And Kustomize Sources
+    path: sections/section-030/module-02/course.md
+  - type: reading
+    title: Directory, Helm And Kustomize Sources
+    path: sections/section-030/module-02/course-01-directory-helm-and-kustomize-sources.md
+  - type: reading
+    title: Helm And Kustomize Parameter Overrides
+    path: sections/section-030/module-02/course-02-parameter-overrides.md
+  - type: reading
+    title: Ignoring Expected Differences With ignoreDifferences
+    path: sections/section-030/module-02/course-03-ignoring-expected-differences.md
+  - type: reading
+    title: Override Helm Values And Ignore A Field In The Playground
+    path: sections/section-030/module-02/course-04-guided-practice.md
+  - type: reading
+    title: Override A Helm Chart And A Kustomize Overlay And Ignore Replicas — Task
+    path: sections/section-030/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Override A Helm Chart And A Kustomize Overlay And Ignore Replicas
+    path: sections/section-030/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 30m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Override a Helm chart and a Kustomize overlay from the Application and ignore
+      a field that another controller owns.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Override A Helm Chart And A Kustomize Overlay And Ignore Replicas — Solution
+    path: sections/section-030/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-030/module-02/course-05-summary.md
+  - type: reading
+    title: Resource Tracking, Finalizers, App Of Apps And Health
+    path: sections/section-030/module-03/course.md
+  - type: reading
+    title: Resource Tracking
+    path: sections/section-030/module-03/course-01-resource-tracking.md
+  - type: reading
+    title: Finalizers And Application Deletion
+    path: sections/section-030/module-03/course-02-finalizers-and-deletion.md
+  - type: reading
+    title: App Of Apps
+    path: sections/section-030/module-03/course-03-app-of-apps.md
+  - type: reading
+    title: Application Health
+    path: sections/section-030/module-03/course-04-application-health.md
+  - type: reading
+    title: Build An App Of Apps And Delete It In The Playground
+    path: sections/section-030/module-03/course-05-guided-practice.md
+  - type: reading
+    title: Build An App Of Apps And Retire A Scratch Application — Task
+    path: sections/section-030/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Build An App Of Apps And Retire A Scratch Application
+    path: sections/section-030/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 30m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Build an app of apps, read the tracking annotations and retire an Application
+      with a cascading finalizer.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Build An App Of Apps And Retire A Scratch Application — Solution
+    path: sections/section-030/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-030/module-03/course-06-summary.md
+  - type: reading
+    title: Bring The Bridge Systems Under Argo CD Control — Task
+    path: sections/section-030/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Bring The Bridge Systems Under Argo CD Control
+    path: sections/section-030/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 45m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Combine a restricted project, a Helm source with overrides, ignored differences,
+      tracking and an app of apps.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Bring The Bridge Systems Under Argo CD Control — Solution
+    path: sections/section-030/capstone/labs/lab-01/solution.md
+  - type: quiz
+    title: 'Knowledge Check: Use Argo CD Application'
+    path: sections/section-030/quiz.yaml
+    pass_score: 70
 - id: module-040
   title: Configure Argo CD with Helm and Kustomize
-  description: Developed reading and reasoning for Configure Argo CD with Helm and
-    Kustomize.
-  maturity: alpha
+  description: Helm and Kustomize as Argo CD rendering inputs, Helm value precedence,
+    release settings and hooks, Kustomize overrides, rendered manifests and render
+    failures.
+  status: alpha
   content:
   - type: reading
     title: Configure Argo CD with Helm and Kustomize
@@ -160,55 +447,151 @@ modules:
     title: Helm And Kustomize As Argo CD Rendering Inputs
     path: sections/section-040/module-01/course.md
   - type: reading
-    title: Helm And Kustomize As Argo CD Rendering Inputs
+    title: Helm Charts As Argo CD Rendering Input
     path: sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
   - type: reading
-    title: Render A Helm Source In Argo CD — Task
+    title: Render A Helm Chart With A Production Values File — Task
     path: sections/section-040/module-01/labs/lab-01/question.md
   - type: lab
-    title: Render A Helm Source In Argo CD
+    title: Render A Helm Chart With A Production Values File
     path: sections/section-040/module-01/labs/lab-01
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 20m
     topic: argo-gitops
     task_kind: build
     learning_goals:
-    - Reconcile the declared application from the internal Git source.
+    - Deploy a Helm chart with a production values file and prove the rendered replicas
+      and image.
     tags:
     - capa
     - argo-gitops
   - type: reading
-    title: Render A Helm Source In Argo CD — Solution
+    title: Render A Helm Chart With A Production Values File — Solution
     path: sections/section-040/module-01/labs/lab-01/solution.md
   - type: reading
-    title: Render A Kustomize Overlay In Argo CD — Task
+    title: Kustomize Bases And Overlays As Argo CD Rendering Input
+    path: sections/section-040/module-01/course-04-kustomize-bases-and-overlays.md
+  - type: reading
+    title: Deploy A Kustomize Overlay With Argo CD — Task
     path: sections/section-040/module-01/labs/lab-02/question.md
   - type: lab
-    title: Render A Kustomize Overlay In Argo CD
+    title: Deploy A Kustomize Overlay With Argo CD
     path: sections/section-040/module-01/labs/lab-02
     difficulty: intermediate
-    estimated_duration: 25m
+    estimated_duration: 20m
     topic: argo-gitops
     task_kind: build
     learning_goals:
-    - Reconcile the declared application from the internal Git source.
+    - Deploy the production Kustomize overlay and prove the prefix, replicas, label
+      and image it renders.
     tags:
     - capa
     - argo-gitops
   - type: reading
-    title: Render A Kustomize Overlay In Argo CD — Solution
+    title: Deploy A Kustomize Overlay With Argo CD — Solution
     path: sections/section-040/module-01/labs/lab-02/solution.md
   - type: reading
-    title: 'Guided Practice: Render A Helm Source In Argo CD'
+    title: Render Helm And Kustomize Sources In The Playground
     path: sections/section-040/module-01/course-02-guided-practice.md
   - type: reading
     title: Summary
     path: sections/section-040/module-01/course-03-summary.md
+  - type: reading
+    title: Helm Values, Parameters And Release Settings
+    path: sections/section-040/module-02/course.md
+  - type: reading
+    title: Helm Value Sources And Precedence In An Application
+    path: sections/section-040/module-02/course-01-helm-value-sources-and-precedence.md
+  - type: reading
+    title: Layer Helm Values For The Fleet Chart — Task
+    path: sections/section-040/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Layer Helm Values For The Fleet Chart
+    path: sections/section-040/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Combine a values file, a values object and a parameter and prove which value
+      wins in the live Deployment.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Layer Helm Values For The Fleet Chart — Solution
+    path: sections/section-040/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Release Names, Namespaces, Hooks And Deterministic Rendering
+    path: sections/section-040/module-02/course-02-release-names-namespaces-crds-hooks-and-determinism.md
+  - type: reading
+    title: Layer Helm Values And Break A Values File In The Playground
+    path: sections/section-040/module-02/course-03-guided-practice.md
+  - type: reading
+    title: Summary
+    path: sections/section-040/module-02/course-04-summary.md
+  - type: reading
+    title: Kustomize Overrides And Inspecting Rendered Output
+    path: sections/section-040/module-03/course.md
+  - type: reading
+    title: Kustomize Overrides In The Application
+    path: sections/section-040/module-03/course-01-kustomize-overrides-in-the-application.md
+  - type: reading
+    title: Override Kustomize Overlays From Two Applications — Task
+    path: sections/section-040/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Override Kustomize Overlays From Two Applications
+    path: sections/section-040/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 30m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Override images, annotations and an inline patch from the Application and prove
+      the live result.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Override Kustomize Overlays From Two Applications — Solution
+    path: sections/section-040/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Inspecting Rendered Manifests And Diagnosing Render Failures
+    path: sections/section-040/module-03/course-02-inspecting-rendered-manifests-and-render-failures.md
+  - type: reading
+    title: Override An Overlay, Compare Output And Fix A Broken Path In The Playground
+    path: sections/section-040/module-03/course-03-guided-practice.md
+  - type: reading
+    title: Summary
+    path: sections/section-040/module-03/course-04-summary.md
+  - type: reading
+    title: Repair And Extend The Fleet Rendering Setup — Task
+    path: sections/section-040/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Repair And Extend The Fleet Rendering Setup
+    path: sections/section-040/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 45m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Repair a Helm Application with a missing values file and add two Kustomize Applications
+      with overrides.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Repair And Extend The Fleet Rendering Setup — Solution
+    path: sections/section-040/capstone/labs/lab-01/solution.md
+  - type: quiz
+    title: Configure Argo CD with Helm and Kustomize Quiz
+    path: sections/section-040/quiz.yaml
+    pass_score: 70
 - id: module-050
   title: Identify Common Reconciliation Patterns
-  description: Developed reading and reasoning for Identify Common Reconciliation
-    Patterns.
-  maturity: alpha
+  description: Refresh, comparison and drift, ignore rules for controller-owned fields,
+    the app-of-apps pattern and ApplicationSet generators and templates.
+  status: alpha
   content:
   - type: reading
     title: Identify Common Reconciliation Patterns
@@ -217,8 +600,14 @@ modules:
     title: Drift, Refresh, Ignore Rules And Reconciliation Patterns
     path: sections/section-050/module-01/course.md
   - type: reading
-    title: Drift, Refresh, Ignore Rules And Reconciliation Patterns
+    title: Refresh, Comparison And Drift
     path: sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
+  - type: reading
+    title: Ignore Differences And Controller-Owned Fields
+    path: sections/section-050/module-01/course-04-ignore-differences-and-controller-owned-fields.md
+  - type: reading
+    title: Ignore Replica Drift In The Playground
+    path: sections/section-050/module-01/course-02-guided-practice.md
   - type: reading
     title: Scope An Ignore Difference Exception — Task
     path: sections/section-050/module-01/labs/lab-01/question.md
@@ -230,7 +619,8 @@ modules:
     topic: argo-gitops
     task_kind: build
     learning_goals:
-    - Reconcile the declared application from the internal Git source.
+    - Ignore only the replica count of Deployments, respect the rule during sync and
+      prove that other drift is still repaired.
     tags:
     - capa
     - argo-gitops
@@ -238,8 +628,94 @@ modules:
     title: Scope An Ignore Difference Exception — Solution
     path: sections/section-050/module-01/labs/lab-01/solution.md
   - type: reading
-    title: 'Guided Practice: Scope An Ignore Difference Exception'
-    path: sections/section-050/module-01/course-02-guided-practice.md
-  - type: reading
     title: Summary
     path: sections/section-050/module-01/course-03-summary.md
+  - type: reading
+    title: Bootstrap Clusters With App Of Apps
+    path: sections/section-050/module-02/course.md
+  - type: reading
+    title: Bootstrap With An App Of Apps
+    path: sections/section-050/module-02/course-01-app-of-apps-bootstrap.md
+  - type: reading
+    title: Edit, Delete And Diagnose Child Applications In The Playground
+    path: sections/section-050/module-02/course-02-children-ownership-and-failures.md
+  - type: reading
+    title: Bootstrap The Fleet With An App Of Apps — Task
+    path: sections/section-050/module-02/labs/lab-01/question.md
+  - type: lab
+    title: Bootstrap The Fleet With An App Of Apps
+    path: sections/section-050/module-02/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 25m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Create a parent Application that owns two child Applications and prove that
+      it repairs and recreates them.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Bootstrap The Fleet With An App Of Apps — Solution
+    path: sections/section-050/module-02/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-050/module-02/course-03-summary.md
+  - type: reading
+    title: Generate Applications With ApplicationSet
+    path: sections/section-050/module-03/course.md
+  - type: reading
+    title: ApplicationSet Generators And Templates
+    path: sections/section-050/module-03/course-01-applicationset-generators-and-templates.md
+  - type: reading
+    title: Generate Applications From Git Files In The Playground
+    path: sections/section-050/module-03/course-02-generate-applications-in-the-playground.md
+  - type: reading
+    title: Generate Environments With An ApplicationSet — Task
+    path: sections/section-050/module-03/labs/lab-01/question.md
+  - type: lab
+    title: Generate Environments With An ApplicationSet
+    path: sections/section-050/module-03/labs/lab-01
+    difficulty: intermediate
+    estimated_duration: 30m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Generate one Application for each environment file with a Git files generator
+      and prove that the ApplicationSet owns and repairs them.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Generate Environments With An ApplicationSet — Solution
+    path: sections/section-050/module-03/labs/lab-01/solution.md
+  - type: reading
+    title: Summary
+    path: sections/section-050/module-03/course-03-summary.md
+  - type: reading
+    title: Bring The Station Fleet Under Three Reconciliation Patterns — Task
+    path: sections/section-050/capstone/labs/lab-01/question.md
+  - type: lab
+    title: Bring The Station Fleet Under Three Reconciliation Patterns
+    path: sections/section-050/capstone/labs/lab-01
+    difficulty: advanced
+    estimated_duration: 45m
+    topic: argo-gitops
+    task_kind: build
+    learning_goals:
+    - Combine a scoped ignore rule, an app-of-apps parent and an ApplicationSet in
+      one fleet and prove each repair behaviour.
+    tags:
+    - capa
+    - argo-gitops
+  - type: reading
+    title: Bring The Station Fleet Under Three Reconciliation Patterns — Solution
+    path: sections/section-050/capstone/labs/lab-01/solution.md
+  - type: quiz
+    title: Identify Common Reconciliation Patterns Quiz
+    path: sections/section-050/quiz.yaml
+    pass_score: 70
+  - type: quiz
+    title: 'Final Knowledge Check: ARGO CD'
+    path: sections/final-domain-quiz.yaml
+    pass_score: 70

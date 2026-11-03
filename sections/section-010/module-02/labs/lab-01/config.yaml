@@ -1,0 +1,48 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-lab-010-02-01
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: source-location
+    description: The Application reads the plain directory at the tag v1.0.0.
+    type: file
+    source: validation/validate-source-location.sh
+    hint: Check spec.source.path and spec.source.targetRevision of the Application fleet-registry. Read the message in status.conditions to see which one the repository server rejects.
+  - name: comparison-error-cleared
+    description: The Application compares successfully and is Synced.
+    type: file
+    source: validation/validate-comparison-error-cleared.sh
+    hint: A ComparisonError means the repository server could not produce manifests. Fix the source, then wait for the next refresh.
+  - name: revision-resolved
+    description: Argo CD resolved the target revision to a commit.
+    type: file
+    source: validation/validate-revision-resolved.sh
+    hint: status.sync.revision stays empty until the repository server can resolve the target revision.
+  - name: workload-delivered
+    description: The git-probe Deployment runs with 2 available replicas, is tracked by fleet-registry and the Application is Healthy.
+    type: file
+    source: validation/validate-workload-delivered.sh
+    hint: After the source is correct the application controller applies the manifests. Look at the Deployment git-probe in starfleet.
+teardown:
+  keepCluster: false

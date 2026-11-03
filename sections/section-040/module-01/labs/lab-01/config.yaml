@@ -25,7 +25,24 @@ testing:
     type: file
     source: solution/apply.sh
 validation:
-  script:
-    name: verify-fields-and-live-evidence
+  scripts:
+  - name: application-spec
+    description: "Application mission renders the chart with the production values file"
     type: file
-    source: validate.sh
+    source: validation/validate-application-spec.sh
+    hint: "Point mission at path chart on main and add values-prod.yaml under spec.source.helm.valueFiles."
+  - name: synced-healthy
+    description: "Application mission is Synced, Healthy and rendered by Helm"
+    type: file
+    source: validation/validate-synced-healthy.sh
+    hint: "Wait until status.sync.status is Synced and status.health.status is Healthy. Automated sync needs spec.syncPolicy.automated."
+  - name: rendered-replicas
+    description: "The rendered Deployment git-probe has 3 available replicas"
+    type: file
+    source: validation/validate-rendered-replicas.sh
+    hint: "values-prod.yaml sets replicas to 3. Check that the Deployment git-probe in starfleet reports 3 available replicas."
+  - name: rendered-image
+    description: "The Deployment uses the chart default image"
+    type: file
+    source: validation/validate-rendered-image.sh
+    hint: "The chart default tag is 3.13-alpine. Do not override the image in this lab."

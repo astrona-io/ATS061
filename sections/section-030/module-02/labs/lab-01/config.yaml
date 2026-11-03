@@ -1,0 +1,43 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-lab-030-02-01
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: prod-chart-rendered
+    description: "probe-prod renders the chart with the values file and the image parameter"
+    type: file
+    source: validation/validate-prod-chart-rendered.sh
+    hint: "Create probe-prod with source type Helm, valueFiles values-prod.yaml, parameter image.tag=3.12-alpine and automated selfHeal, and wait for Synced and Healthy."
+  - name: dev-overlay-overridden
+    description: "probe-dev renders the dev overlay with the image override"
+    type: file
+    source: validation/validate-dev-overlay-overridden.sh
+    hint: "Create probe-dev from kustomize/overlays/dev with spec.source.kustomize.images set to docker.io/library/python:3.12-alpine and an automated sync policy."
+  - name: replicas-ignored
+    description: "A manual replica change on git-probe is not drift"
+    type: file
+    source: validation/validate-replicas-ignored.sh
+    hint: "Add spec.ignoreDifferences to probe-prod for group apps, kind Deployment and jsonPointer /spec/replicas. The check scales the Deployment to 5 and expects Synced and 5 replicas."
+teardown:
+  keepCluster: false

@@ -1,10 +1,5 @@
----
-draft: true
-exam_objectives:
-- Understand Argo CD Fundamentals
----
-# Reconcile A Git Sourced Application
+# Deliver A Git Sourced Application With Argo CD
 
-Reconcile the declared application from the internal Git source.
+UNTESTED. This lab was validated statically with `astrona validate -c` and `bash -n` only. It was never booted, so the checks and the reference solution have not been run against a cluster. Run `astrona test` on it before you rely on it.
 
-The task and solution use a separate pinned kind cluster. Run `testing/smoke.sh` with its private kubeconfig to verify initial rejection and reference success. Static validation is not live evidence. Runtime verification remains pending.
+The old `validate.sh` and `testing/` files of the earlier version are no longer referenced by `config.yaml`. The graded checks are the scripts in `validation/`.

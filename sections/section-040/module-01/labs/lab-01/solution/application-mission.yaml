@@ -9,6 +9,9 @@ spec:
     repoURL: http://git-source.argocd.svc:8080/repo.git
     targetRevision: main
     path: chart
+    helm:
+      valueFiles:
+      - values-prod.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: starfleet

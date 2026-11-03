@@ -1,0 +1,334 @@
+# Knowledge check for section 010. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats061-010
+course_id: ATS061
+exam_code: CAPA
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-010
+  title: Understand Argo CD Fundamentals
+questions:
+- id: ats061-010-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Define desired state, live state and drift in Argo CD terms
+  source_readings:
+  - sections/section-010/module-01/course-01-argo-cd-desired-state-and-reconciliation.md
+  prompt: A team stores a Deployment with 2 replicas in Git. Someone runs `kubectl
+    scale` and sets the live Deployment to 5 replicas. What does Argo CD report for
+    the Application, and why?
+  options:
+  - id: a
+    text: "`Synced`, because the Deployment still exists in the cluster."
+    explanation: Existence is not enough. Argo CD compares field values of the live
+      resource with the target state.
+  - id: b
+    text: "`OutOfSync`, because the live state differs from the target state rendered
+      from Git."
+    explanation: Correct. The difference between target and live state is drift, and
+      drift shows as the sync status `OutOfSync`.
+  - id: c
+    text: "`Degraded`, because the replica count changed."
+    explanation: "`Degraded` is a health status. A different replica count does not
+      make pods unhealthy."
+  - id: d
+    text: "`Unknown`, because Argo CD cannot read the scaled Deployment."
+    explanation: "`Unknown` means the comparison could not be made. Here both states
+      can be read."
+  correct_option: b
+  explanation: The sync status compares live state with target state. A manual scale
+    changes a compared field, so the status is `OutOfSync`.
+- id: ats061-010-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Name the component that renders manifests and the component
+    that compares them
+  source_readings:
+  - sections/section-010/module-02/course-01-components-and-their-roles.md
+  prompt: Which pair of components renders manifests from Git and compares them with
+    the live cluster?
+  options:
+  - id: a
+    text: "`argocd-server` renders and `argocd-redis` compares."
+    explanation: The API server serves the UI and API. Redis is a cache.
+  - id: b
+    text: "`argocd-applicationset-controller` renders and `argocd-dex-server` compares."
+    explanation: These components generate Applications and handle single sign-on.
+      Neither renders or compares.
+  - id: c
+    text: "`argocd-notifications-controller` renders and `argocd-server` compares."
+    explanation: The notifications controller sends messages about events. It does
+      not render or compare.
+  - id: d
+    text: "`argocd-repo-server` renders and `argocd-application-controller` compares."
+    explanation: Correct. The repository server clones the Git repository and produces
+      manifests. The application controller compares them with live resources and
+      applies changes.
+  correct_option: d
+  explanation: The repository server renders, and the application controller compares
+    and applies.
+- id: ats061-010-q03
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Identify how the application controller is deployed
+  source_readings:
+  - sections/section-010/module-02/course-01-components-and-their-roles.md
+  prompt: A learner runs `kubectl -n argocd get deployments` and does not find the
+    application controller. Where is it?
+  options:
+  - id: a
+    text: It runs as the StatefulSet `argocd-application-controller`.
+    explanation: Correct. The controller runs as a StatefulSet in this Argo CD version,
+      so it does not appear among Deployments.
+  - id: b
+    text: It runs as a DaemonSet on every node.
+    explanation: No DaemonSet is used for the application controller.
+  - id: c
+    text: It is part of the `argocd-server` pod.
+    explanation: It is a separate workload with its own pod.
+  - id: d
+    text: It is not installed until the first Application is created.
+    explanation: It is installed with Argo CD and starts before any Application exists.
+  correct_option: a
+  explanation: Check StatefulSets with `kubectl -n argocd get statefulsets` to see
+    the application controller.
+- id: ats061-010-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Diagnose an Application in ComparisonError
+  source_readings:
+  - sections/section-010/module-02/course-02-refresh-and-sync-flow-and-reading-components.md
+  prompt: An Application shows sync status `Unknown` and a condition of type `ComparisonError`.
+    The Application points at the path `workloads/alfa`, which does not exist in the
+    Git repository. What is the correct repair?
+  options:
+  - id: a
+    text: Delete the Deployment in the destination namespace and sync again.
+    explanation: The destination resources are not the cause. The target state cannot
+      be rendered.
+  - id: b
+    text: Restart `argocd-redis` so the cache is rebuilt.
+    explanation: A restart does not change the path. The repository server still fails
+      to find the directory.
+  - id: c
+    text: Change `spec.source.path` to an existing path such as `workloads/alpha`,
+      then let Argo CD refresh.
+    explanation: Correct. The comparison fails because the target state cannot be
+      produced. Fixing the source lets the repository server render, and the status
+      moves to `Synced` or `OutOfSync`.
+  - id: d
+    text: Scale `argocd-application-controller` to 0 and back to 1.
+    explanation: Restarting the controller does not fix a wrong path in the Application.
+  correct_option: c
+  explanation: ComparisonError means the target state could not be produced. Fix the
+    source and the comparison runs.
+- id: ats061-010-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain how a refresh differs from a hard refresh
+  source_readings:
+  - sections/section-010/module-02/course-02-refresh-and-sync-flow-and-reading-components.md
+  prompt: A commit was pushed to the tracked branch, but the Application still shows
+    the old revision and the repository server may have cached the old render. Which
+    action forces the repository server to discard its cache for this Application?
+  options:
+  - id: a
+    text: Annotate the Application with `argocd.argoproj.io/refresh=normal`.
+    explanation: A normal refresh compares again, but it may reuse cached manifests.
+  - id: b
+    text: Annotate the Application with `argocd.argoproj.io/refresh=hard`.
+    explanation: Correct. A hard refresh also invalidates the manifest cache before
+      comparing.
+  - id: c
+    text: Wait for the sync status to become `Healthy`.
+    explanation: "`Healthy` is not a sync status, and waiting does not clear the cache."
+  - id: d
+    text: Delete the annotation `argocd.argoproj.io/tracking-id` from the Deployment.
+    explanation: That annotation links a resource to an Application. It does not control
+      refresh.
+  correct_option: b
+  explanation: Hard refresh clears cached manifests. Normal refresh only repeats the
+    comparison.
+- id: ats061-010-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: State what resource tracking annotations do
+  source_readings:
+  - sections/section-010/module-03/course-01-applications-projects-and-status-fields.md
+  prompt: Argo CD adds `argocd.argoproj.io/tracking-id` to a resource it deployed.
+    What is its purpose?
+  options:
+  - id: a
+    text: It records which Application owns the resource, so Argo CD can find the
+      resource when comparing and pruning.
+    explanation: Correct. The value names the Application and the resource identity.
+  - id: b
+    text: It stores the Git commit that last changed the resource.
+    explanation: The revision is stored in the Application status, not in this annotation.
+  - id: c
+    text: It sets how long the resource may stay `OutOfSync`.
+    explanation: No annotation sets a time limit for the sync status.
+  - id: d
+    text: It selects which Argo CD component is allowed to modify the resource.
+    explanation: Components are not assigned per resource.
+  correct_option: a
+  explanation: The tracking annotation ties a live resource to its Application.
+- id: ats061-010-q07
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Aggregate health from child resources
+  source_readings:
+  - sections/section-010/module-03/course-01-applications-projects-and-status-fields.md
+  prompt: An Application manages three resources. Two are `Healthy`. One Deployment
+    is `Progressing`. What is the health of the Application?
+  options:
+  - id: a
+    text: "`Healthy`, because most resources are healthy."
+    explanation: Health is not decided by majority.
+  - id: b
+    text: "`Synced`, because the resources exist."
+    explanation: "`Synced` is a sync status, not a health status."
+  - id: c
+    text: "`Missing`, because one resource is not finished."
+    explanation: "`Missing` means a resource is absent from the cluster."
+  - id: d
+    text: "`Progressing`, because the application takes the worst status of its resources."
+    explanation: Correct. The Application health follows the least healthy resource.
+  correct_option: d
+  explanation: Aggregation takes the worst status across resources, so one `Progressing`
+    resource makes the Application `Progressing`.
+- id: ats061-010-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Interpret argocd app diff exit codes
+  source_readings:
+  - sections/section-010/module-03/course-02-reading-status-with-the-cli.md
+  prompt: A script runs `argocd app diff mission --core` and the command exits with
+    code 1. What does that mean?
+  options:
+  - id: a
+    text: The command failed because Argo CD could not be reached.
+    explanation: A failure to run is reported with exit code 2.
+  - id: b
+    text: The Application is in sync, because exit code 1 is success.
+    explanation: Exit code 0 means no difference.
+  - id: c
+    text: The command found differences between live and target state.
+    explanation: Correct. Exit code 1 signals that differences exist.
+  - id: d
+    text: The Application is `Degraded`.
+    explanation: Diff compares manifests and does not read health.
+  correct_option: c
+  explanation: Exit code 0 means no diff, 1 means differences were found and 2 means
+    an error.
+- id: ats061-010-q09
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Predict health of an Application that points at a Deployment
+    with a missing image tag
+  source_readings:
+  - sections/section-010/module-03/course-02-reading-status-with-the-cli.md
+  prompt: An Application syncs `broken/bad-image`, where the Deployment uses an image
+    tag that does not exist. One minute after the sync, the sync status is `Synced`.
+    What health status should a learner expect first, and when does it change?
+  options:
+  - id: a
+    text: "`Progressing` at first, and `Degraded` only after the Deployment progress
+      deadline of 600 seconds passes."
+    explanation: Correct. The new pods cannot pull the image, but the Deployment controller
+      marks the rollout failed only after the progress deadline.
+  - id: b
+    text: "`Degraded` at once, because the image pull fails."
+    explanation: Argo CD reports the Deployment condition, and that condition changes
+      only after the deadline.
+  - id: c
+    text: "`Healthy`, because the sync status is `Synced`."
+    explanation: Sync status and health are independent. A synced Application can
+      be unhealthy.
+  - id: d
+    text: "`Missing`, because the image does not exist."
+    explanation: "`Missing` refers to a resource absent from the cluster. The Deployment
+      exists."
+  correct_option: a
+  explanation: Synced says the cluster matches Git. Health says whether the workload
+    works. The Deployment becomes `Degraded` after the progress deadline.
+- id: ats061-010-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Choose the right repair for a workload that Git no longer declares
+  source_readings:
+  - sections/section-010/module-01/course-02-guided-practice.md
+  prompt: 'An Application has automated sync with `selfHeal: true` and `prune: false`.
+    A resource is removed from Git. What happens to the live resource?'
+  options:
+  - id: a
+    text: It is deleted at the next sync, because Git is the source of truth.
+    explanation: 'Deletion needs `prune: true` or a sync with pruning.'
+  - id: b
+    text: It is recreated from the last known revision.
+    explanation: Argo CD does not recreate resources that Git no longer declares.
+  - id: c
+    text: It is moved to the `outpost` namespace.
+    explanation: Argo CD never moves resources between namespaces.
+  - id: d
+    text: It stays in the cluster, and the Application reports `OutOfSync` because
+      the resource is pending prune.
+    explanation: Correct. Without prune, Argo CD does not delete the orphan. It marks
+      the Application as `OutOfSync` for it.
+  correct_option: d
+  explanation: Pruning is a separate policy. Self healing reverts changes to declared
+    resources, and pruning removes undeclared ones.
+- id: ats061-010-q11
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Choose a command that shows the last sync result
+  source_readings:
+  - sections/section-010/module-03/course-02-reading-status-with-the-cli.md
+  prompt: A manual sync of an Application failed. Which field holds the phase, the
+    message and the per-resource results of the last sync?
+  options:
+  - id: a
+    text: "`spec.destination.server`"
+    explanation: This field names the target cluster.
+  - id: b
+    text: "`status.operationState`"
+    explanation: Correct. The operation state records the phase, the message and the
+      results of the last operation.
+  - id: c
+    text: "`metadata.finalizers`"
+    explanation: Finalizers control deletion behaviour.
+  - id: d
+    text: "`spec.project`"
+    explanation: This field names the AppProject that governs the Application.
+  correct_option: b
+  explanation: "`status.operationState` records the most recent sync operation."
+- id: ats061-010-q12
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Explain why a core-mode CLI does not need the API server
+  source_readings:
+  - sections/section-010/module-03/course-02-reading-status-with-the-cli.md
+  prompt: A learner runs `argocd app list --core` and gets a list of Applications
+    while `argocd-server` is scaled to 0. Why does it work?
+  options:
+  - id: a
+    text: The CLI reads the repository server directly.
+    explanation: Core mode talks to the Kubernetes API.
+  - id: b
+    text: The CLI caches the list from an earlier run.
+    explanation: No list cache is kept.
+  - id: c
+    text: The CLI uses the current kubectl context and reads Application objects from
+      the Kubernetes API, so no Argo CD server is needed.
+    explanation: Correct. Core mode runs the logic locally and works on the Application
+      custom resources, which is why the namespace must be set in the context.
+  - id: d
+    text: The CLI starts a temporary `argocd-server` pod.
+    explanation: The CLI does not create pods.
+  correct_option: c
+  explanation: Core mode uses the kubectl context and the Kubernetes API instead of
+    the Argo CD API server.

@@ -5,31 +5,16 @@ exam_objectives:
 ---
 # Repair Live Drift With Self Healing Solution
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Connect to the lab cluster:
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-061-lab-020-01-01)"
-test "$(kubectl config current-context)" = "kind-astro-ats-061-lab-020-01-01" || exit 1
-node_name="astro-ats-061-lab-020-01-01-control-plane"
-worker_name="astro-ats-061-lab-020-01-01-worker"
+kubectl config current-context
 ```
 
-Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
+## Create the Application with automation
 
-## Inspect And Explain
-
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
-
-Inspect the current objects before changing them:
-
-```sh
-kubectl -n starfleet get pods -o wide
-kubectl get nodes -o wide
-```
-
-Enable selfHeal and prune. After initial sync, scale the managed deployment to one; wait for Argo CD to restore two. This verifies a live correction rather than only a syncPolicy field.
-
-Save this as `application-mission.yaml`:
+An Application without a sync policy only compares. The policy `automated` makes the controller sync on its own, `prune` lets it delete objects that Git dropped, and `selfHeal` lets it revert live changes. Save this as `application-mission.yaml`:
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -52,29 +37,30 @@ spec:
       selfHeal: true
 ```
 
-Apply the scoped correction:
+Apply it:
 
 ```sh
 kubectl apply -f application-mission.yaml
 ```
 
-## Verify The Result
-
-Observe the actual result. A denied request returns a nonzero status when the denial works, so run it separately from a shell sequence that stops on error. Status convergence and a successful request establish different parts of the result.
+Then check the result:
 
 ```sh
 kubectl -n argocd wait --for=jsonpath='{.status.sync.status}'=Synced application/mission --timeout=240s
 kubectl -n argocd wait --for=jsonpath='{.status.health.status}'=Healthy application/mission --timeout=240s
-kubectl -n starfleet scale deployment/git-probe --replicas=1
-kubectl -n starfleet wait --for=jsonpath='{.spec.replicas}'=2 deployment/git-probe --timeout=180s
-kubectl -n starfleet rollout status deployment/git-probe --timeout=180s
 ```
 
-Reconcile the declared application from the internal Git source. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required denial or correction. No example command output is presented as evidence of a completed run. A matching field alone does not establish that a process used it or that a controller reconciled it.
+Run `astrona submit` to check this step.
 
-After recording your result, remove the independent lab with `astrona destroy ats-061-lab-020-01-01`.
+## Prove self-heal
 
-## Common pitfalls
+Scale the Deployment down and wait for Argo CD to restore it:
 
-> [!WARNING]
-> Confirm the private context and exact node names before a change. Check the stated scope and live result. Do not change unrelated components to hide the original fault.
+```sh
+kubectl -n starfleet scale deployment/git-probe --replicas=1
+kubectl -n starfleet wait --for=jsonpath='{.spec.replicas}'=2 deployment/git-probe --timeout=180s
+```
+
+If the wait ends successfully, self-heal works. Run `astrona submit` again.
+
+After recording your result, remove the lab with `astrona destroy ats-061-lab-020-01-01`.

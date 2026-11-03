@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# Runs every check in validation/. Kept for the older smoke test.
+set -uo pipefail
 if [[ "$(kubectl config current-context)" != "kind-astro-ats-061-lab-040-01-02" ]]; then
   printf 'Refusing to operate on another Kubernetes context\n' >&2
   exit 1
 fi
 lab_directory="$(cd "$(dirname "$0")" && pwd)"
-python3 "$lab_directory/testing/check.py"
+status=0
+for script in "$lab_directory"/validation/validate-*.sh; do
+  bash "$script" || status=1
+done
+exit "$status"

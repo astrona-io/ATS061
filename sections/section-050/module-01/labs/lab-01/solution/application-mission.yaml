@@ -17,9 +17,10 @@ spec:
       prune: true
       selfHeal: true
     syncOptions:
+    - CreateNamespace=true
     - RespectIgnoreDifferences=true
   ignoreDifferences:
   - group: apps
     kind: Deployment
     jsonPointers:
-    - /metadata/annotations/lab.example.io~1review
+    - /spec/replicas

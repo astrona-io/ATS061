@@ -1,10 +1,5 @@
----
-draft: true
-exam_objectives:
-- Use Argo CD Application
----
-# Constrain Application Source And Destination
+# Restrict An Application To One Repository, Namespace And Kinds
 
-Reconcile the declared application from the internal Git source.
+Graded lab: create an AppProject that allows one repository, one destination and two kinds, and an Application that syncs inside it.
 
-The task and solution use a separate pinned kind cluster. Run `testing/smoke.sh` with its private kubeconfig to verify initial rejection and reference success. Static validation is not live evidence. Runtime verification remains pending.
+UNTESTED. This lab was validated statically with `astrona validate -c` and `bash -n` only. It was never booted, so `validate.sh`, `testing/` and the reference solution have not been run against a cluster. Run `astrona test` on it before you rely on it.

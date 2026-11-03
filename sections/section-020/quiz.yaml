@@ -1,0 +1,334 @@
+# Knowledge check for section 020. Listed in astrona.yaml as a `type: quiz` entry after the capstone lab.
+schema_version: 1
+kind: question_bank
+id: ats061-020
+course_id: ATS061
+exam_code: CAPA
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: section
+  id: section-020
+  title: Synchronize Applications Using Argo CD
+questions:
+- id: ats061-020-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Explain what automated sync does when a manifest is removed
+    from Git and prune is off
+  source_readings:
+  - sections/section-020/module-01/course-01-manual-and-automated-sync-pruning-and-self-healing.md
+  prompt: An Application has `automated` sync with no `prune` setting. A team deletes
+    a ConfigMap manifest from the Git path. What happens to the ConfigMap in the cluster?
+  options:
+  - id: a
+    text: Argo CD deletes it at the next automated sync.
+    explanation: 'Deletion needs `prune: true`. Automated sync does not prune by default.'
+  - id: b
+    text: It stays in the cluster and the Application shows `OutOfSync`, because the
+      object is no longer in Git but is not pruned.
+    explanation: Correct. Without pruning, the object that is no longer in Git stays
+      and is reported as a difference.
+  - id: c
+    text: The sync fails because the manifest is missing.
+    explanation: A removed manifest is not an error. The sync applies what Git holds.
+  - id: d
+    text: Argo CD deletes it after the next hard refresh.
+    explanation: A refresh only updates the comparison. It never deletes objects.
+  correct_option: b
+  explanation: 'Pruning is a separate choice. Without `prune: true`, removed manifests
+    leave objects behind and the Application stays out of sync.'
+- id: ats061-020-q02
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose the setting that reverts manual changes in the cluster
+  source_readings:
+  - sections/section-020/module-01/course-04-pruning-and-self-healing.md
+  prompt: Someone runs `kubectl scale` on a Deployment that an Application manages
+    with automated sync. The team wants Argo CD to set the replicas back without a
+    new commit. Which setting does that?
+  options:
+  - id: a
+    text: "`prune: true`"
+    explanation: "`prune` deletes objects that are no longer in Git. It does not revert
+      field changes."
+  - id: b
+    text: "`allowEmpty: true`"
+    explanation: "`allowEmpty` allows an Application with no objects. It does not
+      revert changes."
+  - id: c
+    text: "`CreateNamespace=true`"
+    explanation: This option creates the destination namespace. It does not affect
+      drift.
+  - id: d
+    text: "`selfHeal: true`"
+    explanation: Correct. Self heal starts a sync when the live state drifts from
+      Git, so it sets the replicas back.
+  correct_option: d
+  explanation: Self heal reacts to changes in the cluster. Automated sync without
+    it reacts only to new commits.
+- id: ats061-020-q03
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain why automated sync with prune refuses to delete everything
+  source_readings:
+  - sections/section-020/module-01/course-04-pruning-and-self-healing.md
+  prompt: 'An Application has `automated` sync with `prune: true`. A commit removes
+    every manifest from its path. The sync does not delete the objects in the cluster.
+    Why?'
+  options:
+  - id: a
+    text: "`allowEmpty` is `false` by default, so Argo CD refuses a sync that would
+      leave no objects."
+    explanation: 'Correct. The default protects against an accidental empty path,
+      and `allowEmpty: true` lifts the protection.'
+  - id: b
+    text: Automated sync never prunes the last object of an Application.
+    explanation: There is no such rule. The cause is the empty target state.
+  - id: c
+    text: 'The Application needs `selfHeal: true` before pruning works.'
+    explanation: Self heal and prune are independent settings.
+  - id: d
+    text: Pruning only runs during a manual sync.
+    explanation: 'Automated sync prunes when `prune: true` is set.'
+  correct_option: a
+  explanation: Automated sync with prune treats an empty result as a likely mistake.
+    The setting `allowEmpty` makes it intentional.
+- id: ats061-020-q04
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Predict the order of objects with sync waves
+  source_readings:
+  - sections/section-020/module-02/course-01-sync-phases-waves-and-hooks.md
+  prompt: 'A path holds a ConfigMap with `argocd.argoproj.io/sync-wave: "-1"`, a Deployment
+    with no wave annotation and a Service with the wave `"1"`. In which order does
+    one sync apply them?'
+  options:
+  - id: a
+    text: All three at the same time, because they are in one sync.
+    explanation: Waves exist to order the objects of one sync.
+  - id: b
+    text: Service, Deployment, ConfigMap, because higher waves run first.
+    explanation: Lower waves run first.
+  - id: c
+    text: ConfigMap first, then the Deployment once the ConfigMap is healthy, then
+      the Service once the Deployment is healthy.
+    explanation: Correct. The default wave is `0`, waves run from low to high and
+      Argo CD waits for health between waves.
+  - id: d
+    text: In alphabetical order of the kinds.
+    explanation: Kind order only breaks ties inside one wave.
+  correct_option: c
+  explanation: Phase, then wave, then kind and name decide the order. The missing
+    annotation means wave `0`.
+- id: ats061-020-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Describe what a failed PreSync hook does to a sync
+  source_readings:
+  - sections/section-020/module-02/course-01-sync-phases-waves-and-hooks.md
+  prompt: A PreSync hook Job fails during a sync. What does Argo CD do?
+  options:
+  - id: a
+    text: It applies the other resources and reports the failure at the end.
+    explanation: The Sync phase does not start after a failed PreSync hook.
+  - id: b
+    text: It stops the sync before the Sync phase and runs the SyncFail hooks.
+    explanation: Correct. The operation ends as failed and no resource of the Sync
+      phase is applied.
+  - id: c
+    text: It retries the hook forever until it passes.
+    explanation: Retries need a retry policy and have a limit. The sync does not loop
+      by itself.
+  - id: d
+    text: It deletes the Application.
+    explanation: A failed hook never deletes the Application.
+  correct_option: b
+  explanation: PreSync hooks gate the sync. A failure stops the operation before the
+    main phase.
+- id: ats061-020-q06
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Choose the sync option that fits an annotation size error
+  source_readings:
+  - sections/section-020/module-02/course-02-sync-options.md
+  prompt: A sync of a large custom resource definition fails because the `last-applied-configuration`
+    annotation is too large. Which sync option fixes the cause?
+  options:
+  - id: a
+    text: "`ServerSideApply=true`"
+    explanation: Correct. Server-side apply tracks field ownership in the API server
+      and has no such annotation.
+  - id: b
+    text: "`PruneLast=true`"
+    explanation: This option changes the order of pruning. It does not change how
+      objects are applied.
+  - id: c
+    text: "`CreateNamespace=true`"
+    explanation: This option creates the namespace. It does not change the size of
+      the annotation.
+  - id: d
+    text: "`Force=true`"
+    explanation: This option deletes and recreates objects. It is destructive and
+      does not address the annotation.
+  correct_option: a
+  explanation: The error comes from client-side apply. Server-side apply removes the
+    annotation limit.
+- id: ats061-020-q07
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Find the evidence that a hook ran after its Job was deleted
+  source_readings:
+  - sections/section-020/module-02/course-01-sync-phases-waves-and-hooks.md
+  - sections/section-020/module-02/course-02-sync-options.md
+  prompt: A PostSync hook Job has the delete policy `HookSucceeded`. After the sync
+    a learner runs `kubectl get jobs` and sees no Job. Which source proves that the
+    hook ran?
+  options:
+  - id: a
+    text: Nothing, because a deleted Job leaves no trace.
+    explanation: The Application keeps the result of the operation.
+  - id: b
+    text: The events of the namespace, which Kubernetes keeps forever.
+    explanation: Events expire and are not a reliable record.
+  - id: c
+    text: The history of the Deployment.
+    explanation: A hook Job is not part of the Deployment history.
+  - id: d
+    text: The list `status.operationState.syncResult.resources` of the Application,
+      which has an entry with the sync phase `PostSync`.
+    explanation: Correct. The operation state stores every resource and hook of the
+      last sync with its phase.
+  correct_option: d
+  explanation: The sync result lives in the Application, not in the deleted Job.
+- id: ats061-020-q08
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Calculate retry waits with a cap
+  source_readings:
+  - sections/section-020/module-03/course-01-sync-retries.md
+  prompt: 'An Application has `retry` with `limit: 5` and a backoff with `duration:
+    5s`, `factor: 2` and `maxDuration: 1m`. What are the waits before the five retries?'
+  options:
+  - id: a
+    text: 5s, 10s, 15s, 20s, 25s
+    explanation: That is a linear increase. The factor multiplies the wait.
+  - id: b
+    text: 5s, 25s, 125s, 625s, 3125s
+    explanation: The factor multiplies the previous wait by 2, not by 5.
+  - id: c
+    text: 5s, 10s, 20s, 40s, 60s
+    explanation: Correct. The fifth wait would be 80 seconds, and `maxDuration` caps
+      it at 60 seconds.
+  - id: d
+    text: 5s, 10s, 20s, 40s, 80s
+    explanation: The maximum duration is 1 minute, so the last wait is capped.
+  correct_option: c
+  explanation: The wait doubles after each failed retry and never exceeds `maxDuration`.
+- id: ats061-020-q09
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Say which syncs a deny window with manualSync blocks
+  source_readings:
+  - sections/section-020/module-03/course-02-sync-windows.md
+  prompt: 'A project has an active `deny` window with `manualSync: true` that matches
+    an Application with automated sync. What happens?'
+  options:
+  - id: a
+    text: Automated sync is blocked and a person can still start a manual sync.
+    explanation: 'Correct. `manualSync: true` lets manual syncs through and does not
+      change automated sync.'
+  - id: b
+    text: Both automated and manual syncs are blocked.
+    explanation: 'That is the behavior without `manualSync: true`.'
+  - id: c
+    text: Both are allowed, because `manualSync` turns the window off.
+    explanation: The window stays active for automated sync.
+  - id: d
+    text: The Application is deleted until the window ends.
+    explanation: A window never deletes an Application.
+  correct_option: a
+  explanation: Windows decide whether a sync may start. The option adds an exception
+    for people.
+- id: ats061-020-q10
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Resolve overlapping allow and deny windows
+  source_readings:
+  - sections/section-020/module-03/course-02-sync-windows.md
+  prompt: A project has an `allow` window from 08:00 to 18:00 and a `deny` window
+    from 12:00 to 13:00. Both match an Application. Can the Application sync at 12:30?
+  options:
+  - id: a
+    text: Yes, because the allow window is active.
+    explanation: An allow window does not override a deny window.
+  - id: b
+    text: Yes, but only manually.
+    explanation: 'Without `manualSync: true` manual syncs are blocked too.'
+  - id: c
+    text: Yes, because the later window replaces the earlier one.
+    explanation: Windows do not replace each other.
+  - id: d
+    text: No, because an active deny window wins over an active allow window.
+    explanation: Correct. Argo CD blocks the sync while any matching deny window is
+      active.
+  correct_option: d
+  explanation: Deny has priority. The allow window opens the time of day, and the
+    deny window removes an hour from it.
+- id: ats061-020-q11
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Explain why a rollback is refused with automated sync on
+  source_readings:
+  - sections/section-020/module-03/course-04-history-and-rollback.md
+  prompt: A team runs `argocd app rollback` on an Application that has automated sync
+    enabled. What happens, and why?
+  options:
+  - id: a
+    text: The rollback works and automated sync switches itself off.
+    explanation: Argo CD does not change the policy for you.
+  - id: b
+    text: Argo CD refuses the rollback, because automated sync would deploy the head
+      of the branch again.
+    explanation: Correct. The rolled-back cluster differs from Git, so automated sync
+      would undo the rollback. Turn automated sync off first.
+  - id: c
+    text: The rollback works and lasts until the next commit.
+    explanation: Automated sync would undo it at the next comparison, not at the next
+      commit.
+  - id: d
+    text: The rollback fails because the history is empty.
+    explanation: The history is not the cause here.
+  correct_option: b
+  explanation: A rollback and automated sync pull in opposite directions, so Argo
+    CD refuses the combination.
+- id: ats061-020-q12
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Interpret the status after a rollback and choose the lasting
+    fix
+  source_readings:
+  - sections/section-020/module-03/course-04-history-and-rollback.md
+  prompt: After a rollback the Application shows `OutOfSync`, and the old version
+    runs correctly. What does the status mean and what should the team do?
+  options:
+  - id: a
+    text: The rollback failed. Run it again until the status is `Synced`.
+    explanation: The rollback succeeded. The status describes the difference with
+      Git.
+  - id: b
+    text: Argo CD lost the history. Delete the Application and create it again.
+    explanation: Nothing is lost. Deleting the Application is not needed.
+  - id: c
+    text: Git still holds the newer commit. Commit a revert or a fix, sync, and then
+      turn automated sync back on.
+    explanation: Correct. The rollback changes only the cluster, so the lasting fix
+      is a commit in Git.
+  - id: d
+    text: The Deployment is unhealthy. Restart its pods.
+    explanation: Health and sync status are different. A restart does not change the
+      comparison.
+  correct_option: c
+  explanation: A rollback buys time. Git remains the source of truth, so Git must
+    change.

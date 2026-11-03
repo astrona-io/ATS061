@@ -3,29 +3,31 @@ draft: true
 exam_objectives:
 - Configure Argo CD with Helm and Kustomize
 ---
-# Render A Helm Source In Argo CD
+# Render A Helm Chart With A Production Values File
 
-Reconcile the declared application from the internal Git source.
+The `git-probe` service of Starfleet runs two replicas by default. The station is entering a busy period, and operations must run it with the production replica count, which the chart keeps in a separate values file. Argo CD must render the chart and own the result. Nobody may install it with Helm by hand.
 
 ## Starting state
 
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
+Argo CD is installed in the `argocd` namespace. The Git server at `http://git-source.argocd.svc:8080/repo.git` holds a Helm chart in the path `chart` on the branch `main`. The chart has the default file `values.yaml` and a second file `values-prod.yaml`. No Application exists.
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Connect to the lab cluster:
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-061-lab-040-01-01)"
-test "$(kubectl config current-context)" = "kind-astro-ats-061-lab-040-01-01" || exit 1
-node_name="astro-ats-061-lab-040-01-01-control-plane"
-worker_name="astro-ats-061-lab-040-01-01-worker"
+kubectl config current-context
 ```
 
-Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
+The context must be `kind-astro-ats-061-lab-040-01-01`.
 
 ## Required result
 
-Select the chart path. Argo CD renders the chart and owns the resulting Kubernetes resources; this does not install a separate Helm release.
+- An Application `mission` in the `argocd` namespace uses the project `default`, the repository above, the revision `main` and the path `chart`, and deploys to `https://kubernetes.default.svc` in the namespace `starfleet`.
+- The Application passes the file `values-prod.yaml` to Helm as a values file.
+- The Application has automated sync with `prune: true` and `selfHeal: true`.
+- The Application is `Synced` and `Healthy`, and Argo CD reports `Helm` as its source type.
+- The Deployment `git-probe` in `starfleet` has 3 available replicas and still runs the chart default image `docker.io/library/python:3.13-alpine`.
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+Do not change the Git server and do not install anything with the `helm` command. Do not create other Applications.

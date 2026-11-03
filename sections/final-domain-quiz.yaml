@@ -1,0 +1,409 @@
+# Final domain knowledge check across all five sections.
+schema_version: 1
+kind: question_bank
+id: ats061-final
+course_id: ATS061
+exam_code: CAPA
+status: draft
+provenance: Original practice material written for this course; not official exam
+  questions.
+scope:
+  type: domain
+  id: argo-cd
+  title: ARGO CD
+questions:
+- id: ats061-final-q01
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Name the component that renders manifests and the component
+    that compares them
+  source_readings:
+  - sections/section-010/module-02/course-01-components-and-their-roles.md
+  prompt: Which pair of components renders manifests from Git and compares them with
+    the live cluster?
+  options:
+  - id: a
+    text: "`argocd-server` renders and `argocd-redis` compares."
+    explanation: The API server serves the UI and API. Redis is a cache.
+  - id: b
+    text: "`argocd-repo-server` renders and `argocd-application-controller` compares."
+    explanation: Correct. The repository server clones the Git repository and produces
+      manifests. The application controller compares them with live resources and
+      applies changes.
+  - id: c
+    text: "`argocd-applicationset-controller` renders and `argocd-dex-server` compares."
+    explanation: These components generate Applications and handle single sign-on.
+      Neither renders or compares.
+  - id: d
+    text: "`argocd-notifications-controller` renders and `argocd-server` compares."
+    explanation: The notifications controller sends messages about events. It does
+      not render or compare.
+  correct_option: b
+  explanation: The repository server renders, and the application controller compares
+    and applies.
+- id: ats061-final-q02
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: State what resource tracking annotations do
+  source_readings:
+  - sections/section-010/module-03/course-01-applications-projects-and-status-fields.md
+  prompt: Argo CD adds `argocd.argoproj.io/tracking-id` to a resource it deployed.
+    What is its purpose?
+  options:
+  - id: a
+    text: It stores the Git commit that last changed the resource.
+    explanation: The revision is stored in the Application status, not in this annotation.
+  - id: b
+    text: It sets how long the resource may stay `OutOfSync`.
+    explanation: No annotation sets a time limit for the sync status.
+  - id: c
+    text: It selects which Argo CD component is allowed to modify the resource.
+    explanation: Components are not assigned per resource.
+  - id: d
+    text: It records which Application owns the resource, so Argo CD can find the
+      resource when comparing and pruning.
+    explanation: Correct. The value names the Application and the resource identity.
+  correct_option: d
+  explanation: The tracking annotation ties a live resource to its Application.
+- id: ats061-final-q03
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Choose the right repair for a workload that Git no longer declares
+  source_readings:
+  - sections/section-010/module-01/course-02-guided-practice.md
+  prompt: 'An Application has automated sync with `selfHeal: true` and `prune: false`.
+    A resource is removed from Git. What happens to the live resource?'
+  options:
+  - id: a
+    text: It stays in the cluster, and the Application reports `OutOfSync` because
+      the resource is pending prune.
+    explanation: Correct. Without prune, Argo CD does not delete the orphan. It marks
+      the Application as `OutOfSync` for it.
+  - id: b
+    text: It is deleted at the next sync, because Git is the source of truth.
+    explanation: 'Deletion needs `prune: true` or a sync with pruning.'
+  - id: c
+    text: It is recreated from the last known revision.
+    explanation: Argo CD does not recreate resources that Git no longer declares.
+  - id: d
+    text: It is moved to the `outpost` namespace.
+    explanation: Argo CD never moves resources between namespaces.
+  correct_option: a
+  explanation: Pruning is a separate policy. Self healing reverts changes to declared
+    resources, and pruning removes undeclared ones.
+- id: ats061-final-q04
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Choose the setting that reverts manual changes in the cluster
+  source_readings:
+  - sections/section-020/module-01/course-04-pruning-and-self-healing.md
+  prompt: Someone runs `kubectl scale` on a Deployment that an Application manages
+    with automated sync. The team wants Argo CD to set the replicas back without a
+    new commit. Which setting does that?
+  options:
+  - id: a
+    text: "`prune: true`"
+    explanation: "`prune` deletes objects that are no longer in Git. It does not revert
+      field changes."
+  - id: b
+    text: "`allowEmpty: true`"
+    explanation: "`allowEmpty` allows an Application with no objects. It does not
+      revert changes."
+  - id: c
+    text: "`selfHeal: true`"
+    explanation: Correct. Self heal starts a sync when the live state drifts from
+      Git, so it sets the replicas back.
+  - id: d
+    text: "`CreateNamespace=true`"
+    explanation: This option creates the destination namespace. It does not affect
+      drift.
+  correct_option: c
+  explanation: Self heal reacts to changes in the cluster. Automated sync without
+    it reacts only to new commits.
+- id: ats061-final-q05
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Choose the sync option that fits an annotation size error
+  source_readings:
+  - sections/section-020/module-02/course-02-sync-options.md
+  prompt: A sync of a large custom resource definition fails because the `last-applied-configuration`
+    annotation is too large. Which sync option fixes the cause?
+  options:
+  - id: a
+    text: "`PruneLast=true`"
+    explanation: This option changes the order of pruning. It does not change how
+      objects are applied.
+  - id: b
+    text: "`ServerSideApply=true`"
+    explanation: Correct. Server-side apply tracks field ownership in the API server
+      and has no such annotation.
+  - id: c
+    text: "`CreateNamespace=true`"
+    explanation: This option creates the namespace. It does not change the size of
+      the annotation.
+  - id: d
+    text: "`Force=true`"
+    explanation: This option deletes and recreates objects. It is destructive and
+      does not address the annotation.
+  correct_option: b
+  explanation: The error comes from client-side apply. Server-side apply removes the
+    annotation limit.
+- id: ats061-final-q06
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Resolve overlapping allow and deny windows
+  source_readings:
+  - sections/section-020/module-03/course-02-sync-windows.md
+  prompt: A project has an `allow` window from 08:00 to 18:00 and a `deny` window
+    from 12:00 to 13:00. Both match an Application. Can the Application sync at 12:30?
+  options:
+  - id: a
+    text: Yes, because the allow window is active.
+    explanation: An allow window does not override a deny window.
+  - id: b
+    text: Yes, but only manually.
+    explanation: 'Without `manualSync: true` manual syncs are blocked too.'
+  - id: c
+    text: Yes, because the later window replaces the earlier one.
+    explanation: Windows do not replace each other.
+  - id: d
+    text: No, because an active deny window wins over an active allow window.
+    explanation: Correct. Argo CD blocks the sync while any matching deny window is
+      active.
+  correct_option: d
+  explanation: Deny has priority. The allow window opens the time of day, and the
+    deny window removes an hour from it.
+- id: ats061-final-q07
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Diagnose an Application that the project refuses
+  source_readings:
+  - sections/section-030/module-01/course-04-appproject-restrictions.md
+  prompt: A new Application in the project `crew` uses a Git URL that is not listed
+    in the `sourceRepos` of `crew`. The manifest was applied without error. What does
+    the learner see?
+  options:
+  - id: a
+    text: The Application exists but reports an error condition about the project
+      and does not sync.
+    explanation: Correct. The API accepts the object, and Argo CD reports the project
+      refusal in the status of the Application.
+  - id: b
+    text: The `kubectl apply` command fails, because Kubernetes checks the project.
+    explanation: Kubernetes does not know the rules of an AppProject. The refusal
+      happens in Argo CD after the object exists.
+  - id: c
+    text: The Application syncs, and Argo CD only logs a warning about the repository.
+    explanation: A project restriction is enforced. The Application does not deploy.
+  - id: d
+    text: Argo CD moves the Application to the project `default` so that it can sync.
+    explanation: Argo CD never changes the project of an Application on its own.
+  correct_option: a
+  explanation: An AppProject is enforced by Argo CD, not by the Kubernetes API. The
+    Application is stored and its status shows why it cannot sync.
+- id: ats061-final-q08
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Override a Kustomize replica count in the Application
+  source_readings:
+  - sections/section-030/module-02/course-02-parameter-overrides.md
+  prompt: A team wants Argo CD to run the Deployment `api` with 4 replicas from a
+    Kustomize path without a commit. Which Application field does that?
+  options:
+  - id: a
+    text: "`spec.source.helm.parameters` with the name `replicas`."
+    explanation: Helm parameters apply only to a Helm source.
+  - id: b
+    text: "`spec.destination.replicas` with the value `4`."
+    explanation: The destination has no replica field. It names a cluster and a namespace.
+  - id: c
+    text: "`spec.source.kustomize.replicas` with the name `api` and the count `4`."
+    explanation: Correct. The `replicas` list of the Kustomize source has a name and
+      a count for each Deployment.
+  - id: d
+    text: "`spec.ignoreDifferences` with the pointer `/spec/replicas`."
+    explanation: That field hides a difference. It does not set a value.
+  correct_option: c
+  explanation: 'The Kustomize source has its own override fields: name prefix, name
+    suffix, namespace, images, replicas and common labels.'
+- id: ats061-final-q09
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Choose the destination of an app-of-apps parent
+  source_readings:
+  - sections/section-030/module-03/course-03-app-of-apps.md
+  prompt: A parent Application syncs the path `apps`, which holds child Application
+    manifests. Which destination namespace is correct for the parent, and why?
+  options:
+  - id: a
+    text: "`starfleet`, because the children deploy their workloads there."
+    explanation: The workload namespace belongs to the children, not to the parent.
+  - id: b
+    text: "`argocd`, because Application objects are namespaced resources that the
+      controller reads from that namespace."
+    explanation: Correct. The parent creates Application objects, so its destination
+      is the namespace where Applications live.
+  - id: c
+    text: "`default`, because every Application object must live in the default namespace."
+    explanation: Applications live in the namespace of Argo CD, not in `default`.
+  - id: d
+    text: No namespace, because Application objects are cluster-scoped.
+    explanation: An Application is a namespaced resource.
+  correct_option: b
+  explanation: The parent deploys Application manifests, so its destination is the
+    namespace of Argo CD. Each child deploys the workloads.
+- id: ats061-final-q10
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Predict the tool Argo CD detects for a directory
+  source_readings:
+  - sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
+  prompt: A Git directory holds a `Chart.yaml` and a `kustomization.yaml`. The Application
+    sets no tool field. What does `status.sourceType` show?
+  options:
+  - id: a
+    text: "`Directory`, because two tool files cancel each other."
+    explanation: Detection does not cancel. The first matching tool file wins.
+  - id: b
+    text: "`Kustomize`, because Kustomize always has priority."
+    explanation: Detection checks for `Chart.yaml` first, so Kustomize does not win
+      here.
+  - id: c
+    text: "`Plugin`, because the choice is ambiguous."
+    explanation: A plugin needs its own configuration. Ambiguity does not select one.
+  - id: d
+    text: "`Helm`, because `Chart.yaml` selects Helm and is checked first."
+    explanation: Correct. A `Chart.yaml` selects Helm. Kustomize is chosen only without
+      one.
+  correct_option: d
+  explanation: Tool detection looks for `Chart.yaml` first, then for a kustomization
+    file, and otherwise uses the directory tool.
+- id: ats061-final-q11
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Predict where objects land when the chart sets a namespace
+  source_readings:
+  - sections/section-040/module-02/course-02-release-names-namespaces-crds-hooks-and-determinism.md
+  prompt: 'The chart templates write `namespace: starfleet`. The Application destination
+    namespace is `outpost`. Where do the objects go?'
+  options:
+  - id: a
+    text: To `starfleet`, because a namespace written in a manifest is kept.
+    explanation: Correct. Argo CD does not rewrite namespaces that the manifests set.
+  - id: b
+    text: To `outpost`, because the destination always overrides the manifests.
+    explanation: The destination namespace applies only to objects without a namespace.
+  - id: c
+    text: To both namespaces, because Argo CD copies the objects.
+    explanation: Argo CD applies each object once.
+  - id: d
+    text: Nowhere, because the namespaces differ and the sync fails.
+    explanation: A different namespace is not an error for objects that name their
+      own.
+  correct_option: a
+  explanation: Argo CD keeps a namespace written in a manifest.
+- id: ats061-final-q12
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Predict the effect of a common label on selectors
+  source_readings:
+  - sections/section-040/module-03/course-01-kustomize-overrides-in-the-application.md
+  prompt: A team adds `commonLabels` to a running Deployment through the Application.
+    The next sync fails with an immutable field error. Why?
+  options:
+  - id: a
+    text: Labels on pods are always immutable.
+    explanation: Pod labels can change through a new rollout.
+  - id: b
+    text: Argo CD cannot apply labels to Services.
+    explanation: Services accept labels.
+  - id: c
+    text: A common label also goes into selectors, and a Deployment selector cannot
+      change after creation.
+    explanation: 'Correct. `labelWithoutSelector: true` avoids this by keeping the
+      label out of selectors.'
+  - id: d
+    text: The Deployment name changed, so Kubernetes rejects the update.
+    explanation: The name did not change. A label does not rename objects.
+  correct_option: c
+  explanation: Common labels reach selectors unless `labelWithoutSelector` is true.
+- id: ats061-final-q13
+  type: single_choice
+  difficulty: beginner
+  learning_objective: Recognise live drift and the setting that repairs it
+  source_readings:
+  - sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
+  prompt: 'Someone runs `kubectl scale` on a Deployment of an Application with automated
+    sync and `selfHeal: true`, and the Git commit did not change. What does the Application
+    show a few seconds later?'
+  options:
+  - id: a
+    text: The replica count stays and the Application is `Synced`.
+    explanation: The Application is `Synced` only when the field is ignored, which
+      this Application does not do.
+  - id: b
+    text: The replica count is set back to the Git value, and the Application returns
+      to `Synced`.
+    explanation: Correct. The change is live drift, and self-heal starts a sync that
+      sets the field back to the target state.
+  - id: c
+    text: The Application is `Unknown` until someone approves a sync.
+    explanation: Automated sync with self-heal needs no approval.
+  - id: d
+    text: The sync fails because the live object changed.
+    explanation: A changed live object does not make a sync fail.
+  correct_option: b
+  explanation: The target state did not change, but the live state did. Self-heal
+    turns that difference into a sync.
+- id: ats061-final-q14
+  type: single_choice
+  difficulty: intermediate
+  learning_objective: Identify the destination namespace of an app-of-apps parent
+  source_readings:
+  - sections/section-050/module-02/course-01-app-of-apps-bootstrap.md
+  prompt: A parent Application reads a path that holds child Application manifests.
+    Which destination namespace must the parent use?
+  options:
+  - id: a
+    text: "`starfleet`, the namespace of the workloads."
+    explanation: The children are Application objects, not workloads.
+  - id: b
+    text: "`default`, because the project is `default`."
+    explanation: The project name is not a namespace.
+  - id: c
+    text: "`kube-system`, because Argo CD runs as a system component."
+    explanation: Argo CD does not run there.
+  - id: d
+    text: "`argocd`, because Application objects live in the Argo CD namespace."
+    explanation: Correct. The parent creates Application objects, so it deploys to
+      the namespace where Argo CD reads them.
+  correct_option: d
+  explanation: The workloads go into the namespaces named by the children. The parent
+    only creates the children.
+- id: ats061-final-q15
+  type: single_choice
+  difficulty: advanced
+  learning_objective: Diagnose duplicate Application names from one template
+  source_readings:
+  - sections/section-050/module-03/course-01-applicationset-generators-and-templates.md
+  - sections/section-050/module-03/course-02-generate-applications-in-the-playground.md
+  prompt: An ApplicationSet template names its Applications `probe`, and three files
+    match the generator. What results?
+  options:
+  - id: a
+    text: One Application, because the three parameter sets render the same name and
+      only one can exist.
+    explanation: Correct. The name must contain a parameter that differs for each
+      set.
+  - id: b
+    text: Three Applications named `probe-1`, `probe-2` and `probe-3`.
+    explanation: Argo CD does not number names.
+  - id: c
+    text: Three Applications named after the files.
+    explanation: The template name is used. It does not change by itself.
+  - id: d
+    text: The ApplicationSet is rejected when it is created.
+    explanation: The ApplicationSet is valid. The problem appears when it is rendered.
+  correct_option: a
+  explanation: Each Application needs a unique name, so the template name must use
+    a parameter.

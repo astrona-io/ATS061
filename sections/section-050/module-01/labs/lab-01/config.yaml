@@ -25,7 +25,24 @@ testing:
     type: file
     source: solution/apply.sh
 validation:
-  script:
-    name: verify-fields-and-live-evidence
+  scripts:
+  - name: application-spec
+    description: "Application mission has the required policy and one narrow ignore rule"
     type: file
-    source: validate.sh
+    source: validation/validate-application-spec.sh
+    hint: "Use automated prune and selfHeal, RespectIgnoreDifferences=true and one ignoreDifferences entry for group apps, kind Deployment and the pointer /spec/replicas."
+  - name: synced-healthy
+    description: "Application mission is Synced, Healthy and tracks the git-probe Deployment"
+    type: file
+    source: validation/validate-synced-healthy.sh
+    hint: "Wait for the Application to become Synced and Healthy. Check status.sync.status, status.health.status and the tracking-id annotation of the Deployment."
+  - name: replicas-ignored
+    description: "A replica count set by hand stays and the Application stays Synced"
+    type: file
+    source: validation/validate-replicas-ignored.sh
+    hint: "Add an ignoreDifferences entry for /spec/replicas of Deployment in group apps. Without it self-heal scales the Deployment back."
+  - name: image-healed
+    description: "A changed image is reverted and the hand-set replica count survives"
+    type: file
+    source: validation/validate-image-healed.sh
+    hint: "Keep selfHeal true and add the sync option RespectIgnoreDifferences=true so the repair does not reset the ignored replica count."

@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: probe-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: http://git-source.argocd.svc:8080/repo.git
+    targetRevision: main
+    path: chart
+    helm:
+      valueFiles:
+      - values-prod.yaml
+      parameters:
+      - name: image.tag
+        value: 3.12-alpine
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: starfleet
+  ignoreDifferences:
+  - group: apps
+    kind: Deployment
+    jsonPointers:
+    - /spec/replicas
+  syncPolicy:
+    automated:
+      selfHeal: true

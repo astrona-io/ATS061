@@ -1,0 +1,53 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-lab-050-02-01
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: root-spec
+    description: "Application fleet-root reads the apps path with automated prune and self-heal"
+    type: file
+    source: validation/validate-root-spec.sh
+    hint: "Use path apps on revision main, destination namespace argocd and automated sync with prune and selfHeal true."
+  - name: children-owned
+    description: "alpha and beta exist and fleet-root owns them"
+    type: file
+    source: validation/validate-children-owned.sh
+    hint: "Let fleet-root create alpha and beta. Their tracking-id annotation must start with fleet-root:."
+  - name: workloads-running
+    description: "Both child Applications are Synced and Healthy and their Deployments are available"
+    type: file
+    source: validation/validate-workloads-running.sh
+    hint: "Wait for alpha and beta to become Synced and Healthy. Each Deployment in starfleet needs one available replica."
+  - name: child-edit-reverted
+    description: "An edit of a live child Application is reverted by the parent"
+    type: file
+    source: validation/validate-child-edit-reverted.sh
+    hint: "Enable selfHeal on fleet-root. The parent then restores the child manifest from Git."
+  - name: child-recreated
+    description: "A deleted child Application returns and its Deployment is untouched"
+    type: file
+    source: validation/validate-child-recreated.sh
+    hint: "Enable selfHeal on fleet-root and do not add a finalizer to the children. The parent creates the child again and the Deployment stays."
+teardown:
+  keepCluster: false

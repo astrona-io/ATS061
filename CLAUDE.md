@@ -203,20 +203,20 @@ The course covers **ARGO CD**, worth **34%** of
 **Certified Argo Project Associate (CAPA)**. It is part of **ATP012**.
 The official objectives are listed in `astrona.yaml` and mapped in `CURRICULUM.md`.
 
-### Reading-only scope
+### Playground and graded lab scope
 
-The maintainer approved the lesson plan, asked for deeper teaching, and explicitly
-requested **no labs or playgrounds**. That instruction overrides shared examples
-about hands-on environments, graded labs and playground markers. Do not create
-runtime configurations, executable exercises or playground lifecycle markers.
-The course must be usable without a cluster or installed command-line tools.
+Each section has three modules and a capstone. Each module has one private ungraded playground (`ats-061-playground-NNN-0M`), guided practice and one graded lab (`ats-061-lab-NNN-0M-01`; section 040 module 01 has two). Each section ends with a capstone lab (`ats-061-capstone-NNN`) and a quiz (`sections/section-NNN/quiz.yaml`); `sections/final-domain-quiz.yaml` closes the course. Register each graded task, launch entry and solution directly after the reading it practises.
+
+Every environment installs Argo CD v3.5.4 from a checksum-pinned manifest and serves one read-only seed Git repository from an in-cluster server at `http://git-source.argocd.svc:8080/repo.git` (dumb HTTP). Labs are graded with `validation.scripts` (one script per check) against live outcomes. Use context guards and bounded waits; node commands may target only this environment's containers.
+
+All labs and playgrounds are UNTESTED: they were validated statically (`astrona validate -c`, `bash -n`, `ruby -ryaml`) and never booted. Whether Argo CD fetches the dumb-HTTP seed repository is unconfirmed. Record static, offline and live evidence separately.
 
 ### Teaching structure and depth
 
 Every section begins with its own introduction and measurable learning outcomes.
 Every module contains a landing page, developed teaching lessons and a final
 `# Summary` page. Put the summary after all its lessons and before the next
-module. This reading-only summary has no playground destruction marker.
+module. The summary ends with <!-- astrona:playground:destroy --> on its own line.
 
 Explain mechanisms, responsible components, realistic examples and the limits
 of each claim. Include worked reasoning and relevant failure cases. Avoid thin
@@ -248,4 +248,4 @@ The ATP registration remains draft until publication is approved.
 Primary author sources are recorded in `SOURCES.md`. The objective list was
 verified on 2026-10-11. Detailed reading expansions were written on 2026-10-11.
 Validate manifest paths, summary ordering, curriculum coverage and question
-contracts. Do not claim runtime verification for a reading-only course.
+contracts. Do not claim live verification until the actual runtime result has been recorded.

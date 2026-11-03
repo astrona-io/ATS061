@@ -5,27 +5,28 @@ exam_objectives:
 ---
 # Repair Live Drift With Self Healing
 
-Reconcile the declared application from the internal Git source.
+The `git-probe` workload in `starfleet` must always run the two replicas that Git declares. An engineer scaled it down by hand during a test and nobody noticed. Create an Application that keeps the workload in the declared state without human help.
 
 ## Starting state
 
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
+Argo CD is installed in the `argocd` namespace. A Git server inside the cluster holds the path `plain` on the branch `main` at `http://git-source.argocd.svc:8080/repo.git`. That path declares the Deployment `git-probe` with two replicas. No Application exists.
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Connect to the lab cluster:
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-061-lab-020-01-01)"
-test "$(kubectl config current-context)" = "kind-astro-ats-061-lab-020-01-01" || exit 1
-node_name="astro-ats-061-lab-020-01-01-control-plane"
-worker_name="astro-ats-061-lab-020-01-01-worker"
+kubectl config current-context
 ```
 
-Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
+The context must be `kind-astro-ats-061-lab-020-01-01`.
 
 ## Required result
 
-Enable selfHeal and prune. After initial sync, scale the managed deployment to one; wait for Argo CD to restore two. This verifies a live correction rather than only a syncPolicy field.
+- An Application named `mission` exists in the `argocd` namespace. It uses the project `default`, the repository above, the revision `main` and the path `plain`, and it deploys to the `starfleet` namespace of the cluster `https://kubernetes.default.svc`.
+- Its sync policy is automated with `prune` and `selfHeal` both set to `true`.
+- The Application is `Synced` and `Healthy`, and the Deployment `git-probe` has two available replicas.
+- After you scale the Deployment to one replica, Argo CD restores two replicas without any further command from you.
 
-## Verify The Result
+## Constraints
 
-The grader checks the required object fields and actual observations. Wait for controller convergence before submitting. Preserve the task's namespace, workload names and unrelated components.
+Do not edit the Deployment directly to set it back to two replicas. The grader checks the Application and the live Deployment.

@@ -1,0 +1,48 @@
+apiVersion: astrona.io/v1
+metadata:
+  name: ats-061-lab-040-02-01
+  docs:
+    prerequisites: docs/prerequisites.md
+    question: question.md
+    solution: solution.md
+runtime:
+  type: kind
+  kind:
+    image: kindest/node:v1.35.0@sha256:452d707d4862f52530247495d180205e029056831160e22870e37e3f6c1ac31f
+    nodes:
+      workers: 1
+bootstrap:
+  init:
+  - name: seed-private-environment
+    type: file
+    source: bootstrap/setup.sh
+# Applied only by `astrona test`: the reference solution.
+testing:
+  init:
+  - name: reference-solution
+    type: file
+    source: solution/apply.sh
+validation:
+  scripts:
+  - name: application-spec
+    description: "Application fleet-chart layers a values file, a values object and a parameter"
+    type: file
+    source: validation/validate-application-spec.sh
+    hint: "Use path chart, valueFiles values-prod.yaml, valuesObject image.tag 3.12-alpine, parameter replicas 4 and destination namespace outpost."
+  - name: synced-healthy
+    description: "Application fleet-chart is Synced, Healthy and rendered by Helm"
+    type: file
+    source: validation/validate-synced-healthy.sh
+    hint: "Wait for Synced and Healthy. Automated sync needs spec.syncPolicy.automated."
+  - name: effective-values
+    description: "The live Deployment has the effective values: 4 replicas and the tag 3.12-alpine"
+    type: file
+    source: validation/validate-effective-values.sh
+    hint: "The parameter wins over the values object and the file for replicas. The values object sets the image tag."
+  - name: namespace-kept
+    description: "The chart keeps its own namespace: objects are in starfleet, none in outpost"
+    type: file
+    source: validation/validate-namespace-kept.sh
+    hint: "The chart templates write namespace starfleet, so the destination namespace outpost does not move them."
+teardown:
+  keepCluster: false

@@ -25,7 +25,24 @@ testing:
     type: file
     source: solution/apply.sh
 validation:
-  script:
-    name: verify-fields-and-live-evidence
+  scripts:
+  - name: application-spec
+    description: "Application mission builds the production overlay"
     type: file
-    source: validate.sh
+    source: validation/validate-application-spec.sh
+    hint: "Point mission at path kustomize/overlays/prod on main. Argo CD selects Kustomize from the kustomization.yaml file."
+  - name: synced-healthy
+    description: "Application mission is Synced, Healthy and built by Kustomize"
+    type: file
+    source: validation/validate-synced-healthy.sh
+    hint: "Wait for Synced and Healthy. status.sourceType must be Kustomize."
+  - name: prefixed-deployment
+    description: "Deployment prod-git-probe has 3 available replicas, the production label and the pinned image"
+    type: file
+    source: validation/validate-prefixed-deployment.sh
+    hint: "The overlay adds the prefix prod-, the label environment=prod, 3 replicas and the tag 3.12-alpine."
+  - name: base-not-deployed
+    description: "The unprefixed base objects do not exist and the prefixed Service does"
+    type: file
+    source: validation/validate-base-not-deployed.sh
+    hint: "Deploy the overlay, not the base. The Service must be called prod-git-probe."

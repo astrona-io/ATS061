@@ -3,33 +3,20 @@ draft: true
 exam_objectives:
 - Use Argo CD Application
 ---
-# Constrain Application Source And Destination Solution
+# Restrict An Application To One Repository, Namespace And Kinds Solution
 
-Use a host shell with the private kubeconfig for this independent kind environment. A kubeconfig identifies the cluster and credentials used by kubectl, the Kubernetes command-line tool.
+Connect to the lab cluster and check the context:
 
 ```sh
 export KUBECONFIG="$(astrona kubeconfig ats-061-lab-030-01-01)"
-test "$(kubectl config current-context)" = "kind-astro-ats-061-lab-030-01-01" || exit 1
-node_name="astro-ats-061-lab-030-01-01-control-plane"
-worker_name="astro-ats-061-lab-030-01-01-worker"
+kubectl config current-context
 ```
 
-Keep this connection selected. Host-level commands name only this environment's node containers. They do not operate on the host operating system.
+The context must be `kind-astro-ats-061-lab-030-01-01`.
 
-## Inspect And Explain
+## Create the project
 
-Argo CD controllers are installed in argocd. The task uses a disposable internal Git source. No learner Application exists.
-
-Inspect the current objects before changing them:
-
-```sh
-kubectl -n starfleet get pods -o wide
-kubectl get nodes -o wide
-```
-
-Allow only the private repository, starfleet destination, Deployment and Service resources in an AppProject. The Application must sync successfully inside that boundary.
-
-Save this as `appproject-mission.yaml`:
+The project comes first so that the Application is checked against it from its first reconciliation. The lists name exactly what the task allows. Save this as `appproject-mission.yaml`:
 
 ```yaml
 apiVersion: argoproj.io/v1alpha1
@@ -48,7 +35,27 @@ spec:
     kind: Deployment
   - group: ''
     kind: Service
----
+```
+
+Apply it:
+
+```sh
+kubectl apply -f appproject-mission.yaml
+```
+
+Then check the result:
+
+```sh
+kubectl -n argocd get appproject mission -o jsonpath='{.spec.destinations[*].namespace}{"\n"}'
+```
+
+The output should be `starfleet`. Run `astrona submit` to check this step. It reports the Application as missing, which is expected.
+
+## Create the Application
+
+Save this as `application-mission.yaml`:
+
+```yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -69,26 +76,21 @@ spec:
       selfHeal: true
 ```
 
-Apply the scoped correction:
+Apply it:
 
 ```sh
-kubectl apply -f appproject-mission.yaml
+kubectl apply -f application-mission.yaml
 ```
 
-## Verify The Result
-
-Observe the actual result. A denied request returns a nonzero status when the denial works, so run it separately from a shell sequence that stops on error. Status convergence and a successful request establish different parts of the result.
+Then check the result. Wait for the sync and the health, and print the conditions and the revision:
 
 ```sh
 kubectl -n argocd wait --for=jsonpath='{.status.sync.status}'=Synced application/mission --timeout=240s
 kubectl -n argocd wait --for=jsonpath='{.status.health.status}'=Healthy application/mission --timeout=240s
+kubectl -n argocd get application mission -o jsonpath='{.status.sync.revision}{"\n"}{.status.conditions}{"\n"}'
+kubectl -n starfleet get deployment git-probe
 ```
 
-Reconcile the declared application from the internal Git source. The commands above deliberately target one environment. Keep its remaining components available so an unrelated failure cannot stand in for the required denial or correction. No example command output is presented as evidence of a completed run. A matching field alone does not establish that a process used it or that a controller reconciled it.
+The revision should be a 40-character SHA and the conditions should be empty. The Deployment should show `2/2` ready. Run `astrona submit` to check the final state.
 
-After recording your result, remove the independent lab with `astrona destroy ats-061-lab-030-01-01`.
-
-## Common pitfalls
-
-> [!WARNING]
-> Confirm the private context and exact node names before a change. Check the stated scope and live result. Do not change unrelated components to hide the original fault.
+After recording your result, remove the lab with `astrona destroy ats-061-lab-030-01-01`.
