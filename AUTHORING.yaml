@@ -50,7 +50,7 @@ sections:
       path: sections/section-010/module-01/labs/lab-01
       after_reading: sections/section-010/module-01/course-01-argo-cd-desired-state-and-reconciliation.md
       objective: Reconcile the declared application from the internal Git source.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-010/module-01/course-02-guided-practice.md
@@ -81,7 +81,7 @@ sections:
       path: sections/section-020/module-01/labs/lab-01
       after_reading: sections/section-020/module-01/course-01-manual-and-automated-sync-pruning-and-self-healing.md
       objective: Reconcile the declared application from the internal Git source.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-020/module-01/course-02-guided-practice.md
@@ -112,7 +112,7 @@ sections:
       path: sections/section-030/module-01/labs/lab-01
       after_reading: sections/section-030/module-01/course-01-application-source-destination-and-project-boundaries.md
       objective: Reconcile the declared application from the internal Git source.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-030/module-01/course-02-guided-practice.md
@@ -143,13 +143,13 @@ sections:
       path: sections/section-040/module-01/labs/lab-01
       after_reading: sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
       objective: Reconcile the declared application from the internal Git source.
-      status: draft
+      status: alpha
       runtime_verification: pending
     - id: lab-02
       path: sections/section-040/module-01/labs/lab-02
       after_reading: sections/section-040/module-01/course-01-helm-and-kustomize-as-argo-cd-rendering-inputs.md
       objective: Reconcile the declared application from the internal Git source.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-040/module-01/course-02-guided-practice.md
@@ -180,7 +180,7 @@ sections:
       path: sections/section-050/module-01/labs/lab-01
       after_reading: sections/section-050/module-01/course-01-drift-refresh-ignore-rules-and-reconciliation-patterns.md
       objective: Reconcile the declared application from the internal Git source.
-      status: draft
+      status: alpha
       runtime_verification: pending
     practice_readings:
     - sections/section-050/module-01/course-02-guided-practice.md

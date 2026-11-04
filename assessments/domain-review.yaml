@@ -3,7 +3,7 @@ kind: question_bank
 id: ats061-domain-review
 course_id: ATS061
 exam_code: CAPA
-status: draft
+status: alpha
 provenance: Original practice material; not official examination questions.
 scope:
   type: domain
