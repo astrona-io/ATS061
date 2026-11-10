@@ -86,7 +86,7 @@ modules:
     difficulty: intermediate
     estimated_duration: 30m
     topic: argo-gitops
-    task_kind: fix
+    task_kind: troubleshooting
     learning_goals:
     - Diagnose a ComparisonError and repair the source path and revision of an Application.
     tags:
@@ -116,7 +116,7 @@ modules:
     difficulty: intermediate
     estimated_duration: 30m
     topic: argo-gitops
-    task_kind: fix
+    task_kind: troubleshooting
     learning_goals:
     - Read sync and health status and correct an Application that delivers a broken
       workload.
