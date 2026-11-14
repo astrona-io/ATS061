@@ -1,3 +1,9 @@
+<p align="center">
+  <a href="https://astrona.io/courses/certified-argo-project-associate-capa">
+    <img src="https://astrona.io/courses/certified-argo-project-associate-capa/domains/ATS061.svg" alt="ATS061: ARGO CD, part of the Certified Argo Project Associate course on Astrona" width="100%">
+  </a>
+</p>
+
 # ARGO CD (ATS061)
 
 Certified Argo Project Associate (CAPA): ARGO CD, worth 34% of the official curriculum. This course belongs to ATP012.
